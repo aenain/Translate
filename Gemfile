@@ -8,6 +8,10 @@ gem 'rails', '3.1.0'
 # gem 'sqlite3'
 gem 'mysql'
 
+# very fast and light server (after problems with mongrel...)
+# more: http://code.macournoyer.com/thin/usage/
+gem 'thin'
+
 # to make life easier and more pleasant :)
 # more: http://aledalgrande.posterous.com/52292198
 # haml-rails instead haml is required for generators to make HAML default instead of ERB.
@@ -36,6 +40,7 @@ gem 'jquery-rails'
 group :development, :test do
   gem 'annotate'
   gem 'ruby-debug19', :require => 'ruby-debug'
+  gem 'shoulda'
 end
 
 group :test do

@@ -1,3 +1,15 @@
+== Servers
+
+1. WEBrick (default) - $ rails s
+2. thin - $ thin start # more: http://code.macournoyer.com/thin/usage/
+
+== Languages
+
+1. HAML (instead of HTML) # more: http://haml-lang.com/docs/yardoc/file.HAML_REFERENCE.html
+2. SASS (instead of CSS) # more: http://sass-lang.com/docs/yardoc/file.SASS_REFERENCE.html
+3. jQuery (instead of Prototype) # more: http://docs.jquery.com/Main_Page
+4. CoffeScript (instead of JavaScript) # more: http://jashkenas.github.com/coffee-script
+
 == Welcome to Rails
 
 Rails is a web-application framework that includes everything needed to create

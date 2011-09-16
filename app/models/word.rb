@@ -1,5 +1,5 @@
 class Word < ActiveRecord::Base
-  has_many :translatings, as: :original
+  has_many :translatings, as: :original, dependent: :destroy
   has_many :translations, through: :translatings, source: :translated, source_type: self.name, uniq: true
 
   validates :name, presence: :true, uniqueness: { scope: :lang }

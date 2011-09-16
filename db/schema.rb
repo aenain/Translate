@@ -11,6 +11,22 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 0) do
+ActiveRecord::Schema.define(:version => 20110914172625) do
+
+  create_table "translatings", :force => true do |t|
+    t.integer  "original_id"
+    t.string   "original_type"
+    t.integer  "translated_id"
+    t.string   "translated_type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "words", :force => true do |t|
+    t.string   "name"
+    t.string   "lang"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
 end

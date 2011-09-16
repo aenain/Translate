@@ -7,6 +7,7 @@ gem 'rails', '3.1.0'
 
 # gem 'sqlite3'
 gem 'mysql'
+gem 'hirb'
 
 # very fast and light server (after problems with mongrel...)
 # more: http://code.macournoyer.com/thin/usage/

@@ -11,6 +11,6 @@ class Word < ActiveRecord::Base
 
   scope :none, where(id: 0)
 
-  scope :by_name, lambda { |name| { conditions: ['name like ?', "%#{name}%"] } }
-  scope :by_lang, lambda { |lang| { conditions: { lang: lang } } }
+  scope :by_name, lambda { |name| where('name like ?', "%#{name}%") }
+  scope :by_lang, lambda { |lang| where(lang: lang) }
 end

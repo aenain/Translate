@@ -1,13 +1,11 @@
 class Search
-  attr_reader :query
+  attr_accessor :query
 
   def initialize(query)
-    @query = query
+    @query = query.to_s.mb_chars.downcase.to_s
   end
 
   def words
-    return @words unless @words.nil?
-
     @search = query.match /^(?<word>[[:alnum:]'\-&]+)(?:\s(?<options>#{lang_options_regexp})?)?$/
 
     unless @search.nil?

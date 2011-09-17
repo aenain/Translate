@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110914172625) do
+ActiveRecord::Schema.define(:version => 20110917232218) do
 
   create_table "translatings", :force => true do |t|
     t.integer  "original_id"

@@ -1,18 +1,24 @@
 - special_letters = { pl: %w[ą Ą ć Ć ę Ę ł Ł ń Ń ó Ó ś Ś ź Ź ż Ż], de: %w[ä Ä ö Ö ü Ü ß] }
 
-.language-box
+#polish.language-box
+  %ul.special-letters
+    - special_letters[:pl].each do |letter|
+      %li.clickable #{letter}
+
+    %li.lang
+      = image_tag 'flag-pl.png', class: 'flag'
+
+  = text_area_tag :word, nil, lang: 'pl'
+
+#german.language-box
   %ul.special-letters
     - special_letters[:de].each do |letter|
       %li.clickable #{letter}
 
     %li.lang
-      = image_tag 'flag-de.png', :class => 'flag'
+      = image_tag 'flag-de.png', class: 'flag'
 
-  = text_area_tag :word
-
-  %ul.prompts
-    - %w{tekst podpowiedzi uzyskanych z autocomplete To może być trudne ale damy rade}.each do |prompt|
-      %li.clickable #{prompt}
+  = text_area_tag :de, nil, lang: 'de'
 
 :coffeescript
   $ () ->
@@ -21,14 +27,31 @@
 
     autocompleteOptions =
       minLength: 2
-      appendTo: ".language-box"
+
+      open: (event, ui) ->
+        $(this).css({ marginBottom: '2px' })
+        menu = $(this).next(".ui-autocomplete.ui-menu")
+        menu.attr("style", "")
+
+      close: (event, ui) ->
+        $(this).css({ marginBottom: '' })
+
+      focus: (event, ui) ->
+        menu = $(this).next(".ui-autocomplete.ui-menu")
+        menu.children(".focus").removeClass("focus")
+        menu.children(".ui-menu-item:has(.ui-state-hover)").addClass("focus")
+
       source: (request, response) ->
         term = $(this.element[0]).val()
 
-        $.getJSON '#{autocomplete_words_path}', { term: term, lang: 'de' }, (data) ->
+        $.getJSON '#{autocomplete_words_path}', { term: term, lang: $(this.element[0]).attr('lang') }, (data) ->
           response data
 
-    $('.language-box textarea').autocomplete autocompleteOptions
+    $.extend autocompleteOptions, { appendTo: "#polish" }
+    $("#word").autocomplete autocompleteOptions
+
+    $.extend autocompleteOptions, { appendTo: "#german" }
+    $("#de").autocomplete autocompleteOptions
 
     combinations = []
 
@@ -38,22 +61,24 @@
 
     for combination in combinations
       $('.language-box textarea').bind 'keydown', combination, (event) ->
+        $self = $(this)
+
         nth = Number event.data.match(/\d+$/)[0]
         nth = 2 * (nth - 1) + 1
         nth += 1 if /shift/.test(event.data)
 
-        $letter = $(this).prev('.special-letters').children('.clickable:nth-child(' + String(nth) + ')')
+        $letter = $self.prev('.special-letters').children('.clickable:nth-child(' + String(nth) + ')')
 
         if $letter?
           $letter.addClass('focus').delay(150).queue () ->
-            $(this).removeClass('focus')
-            $(this).dequeue()
+            $letter.removeClass('focus')
+            $letter.dequeue()
 
-          replaceSelectionWithText { element: $(this), text: $letter.text() }
+          $letter.trigger('click')
 
         event.preventDefault()
 
-    $('.language-box').children('.prompts, .special-letters').children('.clickable').click () ->
+    $('.language-box .special-letters .clickable').click () ->
       $textarea = $(this).parents('.language-box').children('textarea')
 
       replaceSelectionWithText { element: $textarea, text: $(this).text() }, () ->

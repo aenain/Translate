@@ -4,8 +4,12 @@ $languageBoxTextareaHeight: 50px
 .language-box
 	width: $languageBoxWidth
 	padding: 5px
+	margin: 10px 0 0 0
 	background-color: #fff
 	border: 1px solid #ccc
+
+	&:first-child
+		margin-top: 0
 
 	&.focus, &:hover
 		border-color: #bbb
@@ -23,7 +27,7 @@ $languageBoxTextareaHeight: 50px
 			font: bold 11px 'Lucida Grande'
 			color: #aaa
 
-			&.clickable
+			&.clickable, &.ui-menu-item
 				cursor: pointer
 
 				&.focus, &:hover
@@ -52,10 +56,10 @@ $languageBoxTextareaHeight: 50px
 		min-height: $languageBoxTextareaHeight
 		max-height: $languageBoxTextareaHeight
 
-		margin: 3px 0 2px 0
+		margin: 3px 0 23px 0
 		padding: 3px
 		border: 1px solid #eee
-		border-width: 1px 0
+		border-width: 1px 0 0 0
 
 		font: normal 11px 'Lucida Grande'
 

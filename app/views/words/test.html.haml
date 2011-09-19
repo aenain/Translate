@@ -82,8 +82,8 @@
       $textarea = $(this).parents('.language-box').children('textarea')
 
       replaceSelectionWithText { element: $textarea, text: $(this).text() }, () ->
-        # both events have be triggered because of toggling textarea's class
-        $textarea.blur().focus()
+        # autocomplete search has to be triggered (changing value of input doesn't automatically fires up autocomplete)
+        $textarea.autocomplete('search')
 
     replaceSelectionWithText = (options, callback) ->
       element = options.element

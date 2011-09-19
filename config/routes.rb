@@ -1,7 +1,13 @@
 Translate::Application.routes.draw do
-  resources :words
+  resources :words do
+    collection do
+      get 'autocomplete'
+    end
+  end
 
   resources :posts
+
+  match 'test' => 'words#test'
 
   # The priority is based upon order of creation:
   # first created -> highest priority.

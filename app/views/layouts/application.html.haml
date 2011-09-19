@@ -2,9 +2,30 @@
 %html
   %head
     %title Translate
-    = stylesheet_link_tag "application"
-    = javascript_include_tag "application"
+    = stylesheet_link_tag "application", "jquery.ui-1.8.16"
+    = javascript_include_tag "application", "jquery-1.6.4.min", "jquery.fcbkcomplete.min", "jquery.hotkeys", "jquery.caret.1.02", "jquery.ui-1.8.16.custom"
     = csrf_meta_tags
 
   %body
-    = yield
+    .top-bar
+      .navigation
+        %ul.menu
+          %li.active= link_to 'Words', words_path
+          %li= link_to 'Phrases', '#'
+          %li= link_to 'Test', '#'
+          %li.search
+            %form{ action: words_path }
+              = search_field_tag :search, nil, :placeholder => 'Search'
+
+    .content
+      = yield
+
+    :coffeescript
+      focus_search = () -> $('#search').focus()
+
+      combinations = [{ keys: 'alt+f', function: focus_search, prevent: true }]
+
+      for combination in combinations
+        $(document).bind 'keydown', combination.keys, (event) ->
+          event.preventDefault() if combination.prevent
+          combination.function(event)

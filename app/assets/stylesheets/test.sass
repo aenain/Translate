@@ -1,0 +1,63 @@
+$languageBoxWidth: 500px
+$languageBoxTextareaHeight: 50px
+
+.language-box
+	width: $languageBoxWidth
+	padding: 5px
+	background-color: #fff
+	border: 1px solid #ccc
+
+	&.focus, &:hover
+		border-color: #bbb
+		box-shadow: inset 0 0 1px 0 #ccc
+
+	ul
+		overflow: hidden
+
+		li
+			display: block
+			float: left
+			position: relative
+			padding: 3px 5px
+			border: 1px solid #fff
+			font: bold 11px 'Lucida Grande'
+			color: #aaa
+
+			&.clickable
+				cursor: pointer
+
+				&.focus, &:hover
+					background-color: #f7f7f7
+					color: #777
+					border-color: #ccc
+					box-shadow: 0 0 1px #ddd
+					border-radius: 2px
+
+			&.lang
+				float: right
+
+				img.flag
+					width: 18px
+					height: 11px
+					border: 1px solid #000
+
+	textarea
+		resize: none
+
+		width:     $languageBoxWidth - 6px
+		min-width: $languageBoxWidth - 6px
+		max-width: $languageBoxWidth - 6px
+
+		height:     $languageBoxTextareaHeight
+		min-height: $languageBoxTextareaHeight
+		max-height: $languageBoxTextareaHeight
+
+		margin: 3px 0 2px 0
+		padding: 3px
+		border: 1px solid #eee
+		border-width: 1px 0
+
+		font: normal 11px 'Lucida Grande'
+
+		&:focus
+			outline: none

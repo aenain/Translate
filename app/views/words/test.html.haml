@@ -1,0 +1,74 @@
+- special_letters = { pl: %w[ą Ą ć Ć ę Ę ł Ł ń Ń ó Ó ś Ś ź Ź ż Ż], de: %w[ä Ä ö Ö ü Ü ß] }
+
+.language-box
+  %ul.special-letters
+    - special_letters[:de].each do |letter|
+      %li.clickable #{letter}
+
+    %li.lang
+      = image_tag 'flag-de.png', :class => 'flag'
+
+  = text_area_tag :word
+
+  %ul.prompts
+    - %w{tekst podpowiedzi uzyskanych z autocomplete To może być trudne ale damy rade}.each do |prompt|
+      %li.clickable #{prompt}
+
+:coffeescript
+  $ () ->
+    $('.language-box textarea').bind 'focus blur', () ->
+      $(this).parent().toggleClass 'focus'
+
+    autocompleteOptions =
+      minLength: 2
+      appendTo: ".language-box"
+      source: (request, response) ->
+        term = $(this.element[0]).val()
+
+        $.getJSON '#{autocomplete_words_path}', { term: term, lang: 'de' }, (data) ->
+          response data
+
+    $('.language-box textarea').autocomplete autocompleteOptions
+
+    combinations = []
+
+    for i in [1..9]
+      combinations.push 'alt+' + i
+      combinations.push 'alt+shift+' + i
+
+    for combination in combinations
+      $('.language-box textarea').bind 'keydown', combination, (event) ->
+        nth = Number event.data.match(/\d+$/)[0]
+        nth = 2 * (nth - 1) + 1
+        nth += 1 if /shift/.test(event.data)
+
+        $letter = $(this).prev('.special-letters').children('.clickable:nth-child(' + String(nth) + ')')
+
+        if $letter?
+          $letter.addClass('focus').delay(150).queue () ->
+            $(this).removeClass('focus')
+            $(this).dequeue()
+
+          replaceSelectionWithText { element: $(this), text: $letter.text() }
+
+        event.preventDefault()
+
+    $('.language-box').children('.prompts, .special-letters').children('.clickable').click () ->
+      $textarea = $(this).parents('.language-box').children('textarea')
+
+      replaceSelectionWithText { element: $textarea, text: $(this).text() }, () ->
+        # both events have be triggered because of toggling textarea's class
+        $textarea.blur().focus()
+
+    replaceSelectionWithText = (options, callback) ->
+      element = options.element
+      selection = element.caret().text
+
+      text = element.caret().replace(options.text)
+      options.element.val(text)
+
+      # moves cursor to proper position (right after replacement)
+      position = [element.caret().end - selection.length, 0].max() + options.text.length
+      element.caret(position, position)
+
+      callback() if callback?

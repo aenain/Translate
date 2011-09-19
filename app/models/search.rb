@@ -2,10 +2,11 @@ class Search
   attr_accessor :query
 
   def initialize(query)
-    @query = query.to_s.mb_chars.downcase.to_s
+    @query = query
   end
 
   def words
+    # TODO! wymyśleć jak rozpoznawać czy wprowadzono: "sich waschen" czy "essen de"
     @search = query.match /^(?<word>[[:alnum:]'\-&]+)(?:\s(?<options>#{lang_options_regexp})?)?$/
 
     unless @search.nil?

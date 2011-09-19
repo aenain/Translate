@@ -1,0 +1,40 @@
+%h1 Add new translation
+
+= form_for @word do |f|
+  .field
+    = image_tag 'flag-pl.png', class: 'flag'
+    = f.text_field :name, lang: 'pl'
+    = f.hidden_field :lang, value: 'pl'
+
+  .field
+    = image_tag 'flag-en.png', class: 'flag'
+    = text_field_tag :en, nil, lang: 'en'
+
+  .field
+    = image_tag 'flag-de.png', class: 'flag'
+    = text_field_tag :de, nil, lang: 'de'
+
+  .actions
+    = f.submit 'Add', class: 'primary action-button'
+
+:coffeescript
+  ### focus on first input ###
+  $ () ->
+    $('#word_name').focus()
+
+    autocomplete_options =
+      minLength: 2
+      source: (request, response) ->
+        input = this.element[0]
+        term = $('#' + input.id).val()
+
+        $.getJSON '#{autocomplete_words_path}', { term: term, lang: input.lang }, (data) ->
+          response data
+
+    $('#word_name, #en, #de').autocomplete autocomplete_options
+
+= javascript_include_tag "jquery.language-box"
+    $('#word_name').languageInput { autocomplete: autocomplete_options, lang: 'de', specialLetters: { small: ['ä', 'ö', 'ü', 'ß'], big: ['Ä', 'Ö', 'Ü', 'ß'] } }
+
+/ de: ß Ü ü Ö ö Ä ä
+/ pl: Ź ź Ż ż Ą ą Ę ę Ć ć Ń ń Ł ł Ó ó

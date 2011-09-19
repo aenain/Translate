@@ -1,0 +1,32 @@
+@font-face
+	font-family: 'Futura Condensed Medium'
+	src: url('/futura_condensed_medium.ttf')
+
+@font-face
+	font-family: 'DejaVu Sans Mono Bold'
+	src: url('/deja_vu_sans_mono_bold.ttf')
+	font-weight: normal
+	font-style: normal
+
+@each $size in 20, 30
+	.font-#{$size}
+		font-size: #{$size}pt
+
+.italic
+	font-style: italic
+
+.bold
+	font-weight: bold
+
+.normal
+	font-style: normal
+	font-weight: normal
+
+.upcase
+	text-transform: uppercase
+
+.font-futura
+	font-family: 'Futura Condensed Medium'
+
+.font-dejavu-bold
+	font-family: 'DejaVu Sans Mono Bold'

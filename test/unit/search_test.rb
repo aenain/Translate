@@ -10,21 +10,7 @@ class SearchTest < ActiveSupport::TestCase
 
     should "only save the query as instance variable" do
       assert_equal [:@query], @search.instance_variables
-    end
-
-    should "downcase query properly" do
-      assert_equal "eat ążśźęćńół", @search.query
-    end
-  end
-
-  context "#new with argument which is not string" do
-    setup do
-      @query = 123
-      @search = Search.new(@query)
-    end
-
-    should "try convert query passed as argument to string" do
-      assert_equal "123", @search.query
+      assert_equal @query, @search.query
     end
   end
 

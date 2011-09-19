@@ -1,0 +1,22 @@
+@mixin _text-shadow($x, $y, $radius, $color)
+	text-shadow: $x $y $radius $color
+	filter: dropshadow(color=$color, offx=$x, offy=$y)
+
+@mixin _box-shadow($horizontal_length, $vertical_length, $blur_radius, $spread, $shadow_color, $inset: false)
+	@if $inset == 'inset'
+		-webkit-box-shadow: inset $horizontal_length $vertical_length $blur_radius $spread $shadow_color
+		-moz-box-shadow: inset $horizontal_length $vertical_length $blur_radius $spread $shadow_color
+		box-shadow: inset $horizontal_length $vertical_length $blur_radius $spread $shadow_color
+	@else
+		-webkit-box-shadow: $horizontal_length $vertical_length $blur_radius $spread $shadow_color
+		-moz-box-shadow: $horizontal_length $vertical_length $blur_radius $spread $shadow_color
+		box-shadow: $horizontal_length $vertical_length $blur_radius $spread $shadow_color
+
+@mixin _vertical-gradient($higher_color, $higher_position, $lower_color, $lower_position)
+	background: -moz-linear-gradient(top, $higher_color $higher_position, $lower_color $lower_position) // FF3.6+
+	background: -webkit-gradient(linear, left top, left bottom, color-stop($higher_position, $higher_color), color-stop($lower_position, $lower_color)) // Chrome, Safari4+
+	background: -webkit-linear-gradient(top, $higher_color $higher_position, $lower_color $lower_position) // Chrome10+,Safari5.1+
+	background: -o-linear-gradient(top, $higher_color $higher_position, $lower_color $lower_position) // Opera11.10+
+	background: -ms-linear-gradient(top, $higher_color $higher_position, $lower_color $lower_position) // IE10+
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='$higher_color', endColorstr='$lower_color',GradientType=0 ) // IE6-9
+	background: linear-gradient(top, $higher_color $higher_position, $lower_color $lower_position) // W3C

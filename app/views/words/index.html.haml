@@ -1,0 +1,22 @@
+%h1 Listing words
+
+%table
+  %tr
+    %th Name
+    %th Language
+    %th
+    %th
+    %th
+
+  - unless @words.nil?
+    - @words.each do |word|
+      %tr
+        %td= word.name
+        %td= word.lang
+        %td= link_to 'Show', word
+        %td= link_to 'Edit', edit_word_path(word)
+        %td= link_to 'Destroy', word, :confirm => 'Are you sure?', :method => :delete
+
+%br
+
+= link_to 'New Translation', new_word_path

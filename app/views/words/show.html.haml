@@ -1,0 +1,17 @@
+%p#notice= notice
+
+%p
+  %b Name:
+  = @word.name
+%p
+  %b Language:
+  = @word.lang
+
+- unless @translations.blank?
+  %ul
+    - @translations.each do |translation|
+      %li #{translation.name} #{translation.lang}
+
+= link_to 'Edit', edit_word_path(@word)
+\|
+= link_to 'Back', words_path

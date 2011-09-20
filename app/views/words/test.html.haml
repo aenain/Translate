@@ -1,99 +1,165 @@
 - special_letters = { pl: %w[ą Ą ć Ć ę Ę ł Ł ń Ń ó Ó ś Ś ź Ź ż Ż], de: %w[ä Ä ö Ö ü Ü ß] }
 
-#polish.language-box
-  %ul.special-letters
-    - special_letters[:pl].each do |letter|
-      %li.clickable #{letter}
+#german.language-box{ lang: 'de' }
+  .main-bar
+    %ul.special-letters
+      - special_letters[:de].each do |letter|
+        %li.clickable= letter
 
-    %li.lang
-      = image_tag 'flag-pl.png', class: 'flag'
-
-  = text_area_tag :word, nil, lang: 'pl'
-
-#german.language-box
-  %ul.special-letters
-    - special_letters[:de].each do |letter|
-      %li.clickable #{letter}
-
-    %li.lang
+    .lang
       = image_tag 'flag-de.png', class: 'flag'
 
-  = text_area_tag :de, nil, lang: 'de'
+  = text_area_tag :de
+
+#polish.language-box{ lang: 'pl' }
+  .main-bar
+    %ul.special-letters
+      - special_letters[:pl].each do |letter|
+        %li.clickable #{letter}
+
+    .lang
+      = image_tag 'flag-pl.png', class: 'flag'
+
+  = text_area_tag :word
+
+#english{ lang: 'en' }
 
 :coffeescript
   $ () ->
-    $('.language-box textarea').bind 'focus blur', () ->
+    # TODO! w przypadku niepodania atrybutu lang podczas tworzenia stara sie ustalić jezyk (atrybut lang elementu)
+    # my goal: $('#german, #polish').languageBox { sourceUrl: '#{autocomplete_words_path}' }
+
+    $('.language-box textarea').bind 'focus.languageBox.textarea blur.languageBox.textarea', () ->
       $(this).parent().toggleClass 'focus'
 
     autocompleteOptions =
       minLength: 2
 
       open: (event, ui) ->
-        $(this).css({ marginBottom: '2px' })
+        $(this).addClass('with-prompts')
+
         menu = $(this).next(".ui-autocomplete.ui-menu")
-        menu.attr("style", "")
+        menu.removeAttr("style")
 
       close: (event, ui) ->
-        $(this).css({ marginBottom: '' })
+        $(this).removeClass('with-prompts')
 
       focus: (event, ui) ->
         menu = $(this).next(".ui-autocomplete.ui-menu")
+
         menu.children(".focus").removeClass("focus")
         menu.children(".ui-menu-item:has(.ui-state-hover)").addClass("focus")
 
       source: (request, response) ->
-        term = $(this.element[0]).val()
+        textarea = this.element[0]
+        data = $.data textarea, 'languageBox'
 
-        $.getJSON '#{autocomplete_words_path}', { term: term, lang: $(this.element[0]).attr('lang') }, (data) ->
+        $.getJSON data.sourceUrl, { term: $(textarea).val(), lang: data.lang }, (data) ->
           response data
 
-    $.extend autocompleteOptions, { appendTo: "#polish" }
-    $("#word").autocomplete autocompleteOptions
+    bindTextareaKeyCombinations = ($textarea, options, callback) ->
+      combinationFormats =
+        small: options? && options.combinations? && options.combinations.small || 'alt+NUMBER'
+        capital: options? && options.combinations? && options.combinations.capital || 'alt+shift+NUMBER'
 
-    $.extend autocompleteOptions, { appendTo: "#german" }
-    $("#de").autocomplete autocompleteOptions
+      combinations = []
 
-    combinations = []
+      for i in [1..9]
+        combinations.push combinationFormats.small.replace('NUMBER', i)
+        combinations.push combinationFormats.capital.replace('NUMBER', i)
 
-    for i in [1..9]
-      combinations.push 'alt+' + i
-      combinations.push 'alt+shift+' + i
+      for combination in combinations
+        $textarea.bind 'keydown.languageBox.combinations', combination, (event) ->
+          event.preventDefault()
+          $self = $(this)
 
-    for combination in combinations
-      $('.language-box textarea').bind 'keydown', combination, (event) ->
-        $self = $(this)
+          nth = Number event.data.match(/\d+$/)[0]
+          nth = 2 * (nth - 1) + 1
+          nth += 1 if /shift/.test(event.data)
 
-        nth = Number event.data.match(/\d+$/)[0]
-        nth = 2 * (nth - 1) + 1
-        nth += 1 if /shift/.test(event.data)
+          $letter = $self.siblings('.main-bar').find('.special-letters li:nth-child(' + String(nth) + ')')
 
-        $letter = $self.prev('.special-letters').children('.clickable:nth-child(' + String(nth) + ')')
+          if $letter?
+            $letter.trigger('click.languageBox.specialLetter')
+            callback($letter) if callback?
 
-        if $letter?
-          $letter.addClass('focus').delay(150).queue () ->
-            $letter.removeClass('focus')
-            $letter.dequeue()
+    $('.language-box .special-letters li').bind 'click.languageBox.specialLetter', () -> clickLanguageBoxSpecialLetter(this)
 
-          $letter.trigger('click')
+    # functions and event handlers
+    clickLanguageBoxSpecialLetter = (element) ->
+      $textarea = $(element).parents('.language-box').children('textarea')
 
-        event.preventDefault()
-
-    $('.language-box .special-letters .clickable').click () ->
-      $textarea = $(this).parents('.language-box').children('textarea')
-
-      replaceSelectionWithText { element: $textarea, text: $(this).text() }, () ->
-        # autocomplete search has to be triggered (changing value of input doesn't automatically fires up autocomplete)
+      replaceSelectionWithText { element: $textarea, text: $(element).text() }, () ->
+        # autocomplete search has to be triggered (changing a value of the input via js doesn't automatically fires up autocomplete)
         $textarea.autocomplete('search')
 
     replaceSelectionWithText = (options, callback) ->
-      element = options.element
-      selection = element.caret().text
+      $element = options.element
+      caret = $element.caret()
 
-      text = element.caret().replace(options.text)
-      options.element.val(text)
+      $element.val caret.replace(options.text)
 
-      # moves cursor to proper position (right after replacement)
-      position = [element.caret().end - selection.length, 0].max() + options.text.length
-      element.caret(position, position)
+      # caret.end is index of last char in selection (or last char in input)
+      # caret.text is text of selection or empty string
+      position = max(caret.end - caret.text.length, 0) + options.text.length
+      # move cursor to proper position (right after replacement)
+      $element.caret(position, position)
 
-      callback() if callback?
+      callback($element) if callback?
+
+    max = (a, b) ->
+      if a >= b then a else b
+
+    # settings for existing elements in DOM
+    $.each $('.language-box textarea'), (index, textarea) ->
+      bindTextareaKeyCombinations $(textarea), {}, ($letter) ->
+        $letter.addClass('focus').delay(150).queue () ->
+          $letter.removeClass('focus')
+          $letter.dequeue()
+    $.data $("#word")[0], 'languageBox', { sourceUrl: '#{autocomplete_words_path}', lang: $("#polish").attr('lang') }
+    $.extend autocompleteOptions, { appendTo: "#polish" }
+    $("#word").autocomplete autocompleteOptions
+
+    $.data $("#de")[0], 'languageBox', { sourceUrl: '#{autocomplete_words_path}', lang: $("#german").attr('lang') }
+    $.extend autocompleteOptions, { appendTo: "#german" }
+    $("#de").autocomplete autocompleteOptions
+
+    # whole flow for non-existing element in DOM
+
+    # settings
+    sourceUrl = '#{autocomplete_words_path}'
+
+    specialLetterClickCallback = ($letter) ->
+      $letter.addClass('focus').delay(150).queue () ->
+        $letter.removeClass('focus')
+        $letter.dequeue()
+
+    imagesDirectory = '/assets/'
+
+    # language-box's generating
+    $box = $("#english").addClass('language-box').identify('language-box')
+    lang = $box.attr('lang')
+
+    $mainTab = $("<div></div>").addClass('main-bar').appendTo($box)
+    $specialLettersList = $("<ul></ul>").addClass('special-letters').appendTo($mainTab)
+
+    $.each ['a', 'b', 'c'], (letter) ->
+      $("<li></li>").addClass('clickable').text(letter).appendTo($specialLettersList)
+
+    $lang = $("<div></div>").addClass('lang').appendTo($mainTab)
+    $flag = $("<img />").addClass('flag').attr('src', imagesDirectory + "flag-" + lang + ".png").attr('alt', "flag-" + lang).appendTo($lang)
+
+    $textarea = $("<textarea></textarea>").appendTo($box)
+
+    # setting up data
+    $.data $textarea[0], 'languageBox', { sourceUrl: sourceUrl, lang: lang }
+
+    # binding events
+    $specialLettersList.children('li').bind 'click.languageBox.specialLetter', () -> clickLanguageBoxSpecialLetter(this)
+    $textarea.bind 'focus.languageBox.textarea blur.languageBox.textarea', () -> $(this).parent().toggleClass 'focus'
+
+    bindTextareaKeyCombinations $textarea, {}, specialLetterClickCallback
+
+    # setting up autocomplete
+    $.extend autocompleteOptions, { appendTo: "#" + $box.attr('id') }
+    $textarea.autocomplete autocompleteOptions

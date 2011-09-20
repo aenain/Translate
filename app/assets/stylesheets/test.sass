@@ -4,16 +4,31 @@ $languageBoxTextareaHeight: 50px
 .language-box
 	width: $languageBoxWidth
 	padding: 5px
-	margin: 10px 0 0 0
 	background-color: #fff
 	border: 1px solid #ccc
-
-	&:first-child
-		margin-top: 0
 
 	&.focus, &:hover
 		border-color: #bbb
 		box-shadow: inset 0 0 1px 0 #ccc
+
+	.main-bar
+		overflow: hidden
+		width: 100%
+		padding-bottom: 3px
+		border-bottom: 1px solid #eee
+
+		ul
+			max-width: $languageBoxWidth - 50px
+			float: left
+
+		.lang
+			float: right
+			padding: 3px 5px
+
+			.flag
+				width: 18px
+				height: 11px
+				border: 1px solid #000
 
 	ul
 		overflow: hidden
@@ -25,25 +40,18 @@ $languageBoxTextareaHeight: 50px
 			padding: 3px 5px
 			border: 1px solid #fff
 			font: bold 11px 'Lucida Grande'
+			line-height: 13px !important
 			color: #aaa
 
 			&.clickable, &.ui-menu-item
 				cursor: pointer
 
-				&.focus, &:hover
-					background-color: #f7f7f7
-					color: #777
-					border-color: #ccc
-					box-shadow: 0 0 1px #ddd
-					border-radius: 2px
-
-			&.lang
-				float: right
-
-				img.flag
-					width: 18px
-					height: 11px
-					border: 1px solid #000
+			&.focus, &.clickable:hover
+				background-color: #f7f7f7
+				color: #777
+				border-color: #ccc
+				box-shadow: 0 0 1px #ddd
+				border-radius: 2px
 
 	textarea
 		resize: none
@@ -56,12 +64,14 @@ $languageBoxTextareaHeight: 50px
 		min-height: $languageBoxTextareaHeight
 		max-height: $languageBoxTextareaHeight
 
-		margin: 3px 0 23px 0
-		padding: 3px
-		border: 1px solid #eee
-		border-width: 1px 0 0 0
+		margin: 0
+		padding: 3px 3px 23px 3px
+		border: 0
 
 		font: normal 11px 'Lucida Grande'
+
+		&.with-prompts
+			padding-bottom: 2px
 
 		&:focus
 			outline: none

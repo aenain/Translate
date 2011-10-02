@@ -3,15 +3,16 @@
   %head
     %title Translate
     = stylesheet_link_tag "application"
-    = javascript_include_tag "application"
+    = javascript_include_tag "application", "http://canvg.googlecode.com/svn/trunk/rgbcolor.js", "http://canvg.googlecode.com/svn/trunk/canvg.js"
     = csrf_meta_tags
-
+ 
   %body
     .top-bar
+      %canvas#logo
+
       .navigation
         %ul.menu
           %li.active= link_to 'Words', words_path
-          %li= link_to 'Phrases', '#'
           %li= link_to 'Test', '#'
           %li.search
             %form{ action: words_path }
@@ -19,6 +20,12 @@
 
     .content
       = yield
+
+    .footer
+      Copyright &copy;
+      - year = { start: 2011, current: Date.today.year }
+      = (year[:current] != year[:start]) ? "#{year[:start]} - #{year[:current]}" : "#{year[:start]}"
+      %span.author Artur Hebda
 
     :coffeescript
       focus_search = () -> $('#search').focus()
@@ -29,3 +36,12 @@
         $(document).bind 'keydown', combination.keys, (event) ->
           event.preventDefault() if combination.prevent
           combination.function(event)
+
+      $ () ->
+        canvg('logo', '/assets/translate_logo.svg')
+
+        $('#search').bind 'focus.increaseOpacity', () ->
+          $('#search').animate { opacity: 1.0 }, 200
+
+        $('#search').bind 'blur.decreaseOpacity', () ->
+          $('#search').animate { opacity: 0.2 }, 100

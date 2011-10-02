@@ -1,40 +1,90 @@
-%h1 Add new translation
+%h1 New Translation
 
 = form_for @word do |f|
-  .field
-    = image_tag 'flag-pl.png', class: 'flag'
-    = f.text_field :name, lang: 'pl'
-    = f.hidden_field :lang, value: 'pl'
+  = f.hidden_field :lang
+  = hidden_field_tag :step, 1
 
-  .field
-    = image_tag 'flag-en.png', class: 'flag'
-    = text_field_tag :en, nil, lang: 'en'
+  #polish{ lang: 'pl' }
 
-  .field
-    = image_tag 'flag-de.png', class: 'flag'
-    = text_field_tag :de, nil, lang: 'de'
+  #german.hidden{ lang: 'de' }
+  #english.hidden{ lang: 'en' }
 
   .actions
-    = f.submit 'Add', class: 'primary action-button'
+    %input.prev.secondary.hidden{ type: 'button', value: 'Back' }
+    %input.next.primary{ type: 'button', value: 'Continue' }
+
+    = f.submit 'Create', class: 'hidden primary'
+
+:javascript
+  $(function() {
+    $('#polish').languageBox({ sourceUrl: '#{autocomplete_words_path}', textareaNameFormat: 'word[name]', word: '#{@word.name}' });
+    $("#polish textarea").focus()
+  });
 
 :coffeescript
-  ### focus on first input ###
   $ () ->
-    $('#word_name').focus()
+    $('#german, #english').languageBox { sourceUrl: '#{autocomplete_words_path}' }
 
-    autocomplete_options =
-      minLength: 2
-      source: (request, response) ->
-        input = this.element[0]
-        term = $('#' + input.id).val()
+    steps =
+      range:
+        min: 1
+        max: 3
 
-        $.getJSON '#{autocomplete_words_path}', { term: term, lang: input.lang }, (data) ->
-          response data
+      step:
+        get: () -> Number $("#step").val()
+        set: (step) -> $("#step").val step
 
-    $('#word_name, #en, #de').autocomplete autocomplete_options
+      next: (@element) ->
+        step = @step.get()
 
-= javascript_include_tag "jquery.language-box"
-    $('#word_name').languageInput { autocomplete: autocomplete_options, lang: 'de', specialLetters: { small: ['ä', 'ö', 'ü', 'ß'], big: ['Ä', 'Ö', 'Ü', 'ß'] } }
+        if step < @range.max
+          @findPrevButton().removeClass('hidden')
+          @findCurrentBox().addClass('hidden')
+          @findNextBox().removeClass('hidden').find('textarea').focus()
 
-/ de: ß Ü ü Ö ö Ä ä
-/ pl: Ź ź Ż ż Ą ą Ę ę Ć ć Ń ń Ł ł Ó ó
+          @step.set step + 1
+
+        if step + 1 >= @range.max
+          @element.addClass('hidden')
+          @findSubmitButton().removeClass('hidden')
+
+      prev: (@element) ->
+        step = @step.get()
+
+        if step > @range.min
+          @findCurrentBox().addClass('hidden')
+          @findPrevBox().removeClass('hidden').find('textarea').focus()
+          @findNextButton().removeClass('hidden')
+          @findSubmitButton().addClass('hidden')
+
+          @step.set step - 1
+
+        if step - 1 <= @range.min
+          @element.addClass('hidden')
+
+      findCurrentBox: () ->
+        $ @findBoxes()[@step.get() - 1]
+
+      findPrevBox: () ->
+        $ @findBoxes()[@step.get() - 2]
+
+      findNextBox: () ->
+        $ @findBoxes()[@step.get()]
+
+      findBoxes: () ->
+        @element.parents('form').find('.language-box')
+
+      findPrevButton: () ->
+        @element.siblings('.prev')
+
+      findNextButton: () ->
+        @element.siblings('.next')
+
+      findSubmitButton: () ->
+        @element.siblings("input[type='submit']")
+
+
+    $('form .actions .next').bind 'click.nextLanguageBox', () -> steps.next $(this)
+
+    $('form .actions .prev').bind 'click.prevLanguageBox', () -> steps.prev $(this)
+      

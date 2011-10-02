@@ -21,7 +21,7 @@ closure = ($) ->
 	class Box
 		constructor: (@box, @options) ->
 			@lang = @box.attr('lang') || @options.lang
-			console.log this
+			@useAutocomplete = (typeof @options.autocomplete == 'object' and @options.autocomplete)
 
 		buildStructure: ->
 			@box.addClass('language-box').identify('language-box')
@@ -50,16 +50,19 @@ closure = ($) ->
 
 		buildLanguageMarker: ->
 			@languageMarker = $("<div></div>").addClass('lang').appendTo(@mainBar)
-			@flag = $("<img />").addClass('flag').attr('src', "#{@options.imagesDirectory}/flag-#{@lang}.png").attr('alt', "flag-#{@lang}").appendTo(@languageMarker)
+			@flag = $("<img />").addClass('flag').attr({ src: "#{@options.imagesDirectory}/flag-#{@lang}.png", alt: "flag-#{@lang}" }).appendTo(@languageMarker)
 			return this
 
 		buildTextarea: ->
-			@textarea = $("<textarea></textarea>").appendTo(@box)
+			name = @options.textareaNameFormat.replace('LANG', @lang)
+			@textarea = $("<textarea></textarea>").attr('name', name).val(@options.word).appendTo(@box)
 			return this
 
 		setUpData: ->
-			# $.data requires a specific DOM object as the first argument (not $-wrapped)
-			$.data @textarea[0], 'languageBox', { sourceUrl: @options.sourceUrl, lang: @lang }
+			if @useAutocomplete
+				# $.data requires a specific DOM object as the first argument (not $-wrapped)
+				$.data @textarea[0], 'languageBox', { sourceUrl: @options.sourceUrl, lang: @lang, termMapper: @options.termMapper }
+
 			return this
 
 		bindEvents: ->
@@ -72,17 +75,34 @@ closure = ($) ->
 			@specialLetterList.children('li').bind 'click.languageBox.specialLetter', () ->
 				# now this points to clicked element (li)
 				replaceSelectionWithText { element: self.textarea, text: $(this).text() }, () ->
-				  # autocomplete search has to be triggered (changing a value of the input via js doesn't automatically fires up autocomplete)
-				  self.textarea.autocomplete('search')
+					if @useAutocomplete
+				  	# autocomplete search has to be triggered (changing a value of the input via js doesn't automatically fires up autocomplete)
+				  	self.textarea.autocomplete('search')
 
 			return this
 
 		bindTextareaEvents: ->
 			this.bindFocusEvents()
+			this.bindHighlighting()
 			this.bindKeyCombinations()
 
 		bindFocusEvents: ->
-			@textarea.bind 'focus.languageBox.textarea blur.languageBox.textarea', () -> $(this).parent().toggleClass('focus')
+			@textarea.bind 'focus.languageBox.textarea', () -> $(this).parent().addClass('focus')
+			@textarea.bind 'blur.languageBox.textarea', () -> $(this).parent().removeClass('focus')
+
+			@textarea.bind 'focus.languageBox.setPosition', () ->
+				position = $(this).val().length
+				$(this).caret(position, position)
+
+			return this
+
+		bindHighlighting: ->
+			self = this
+
+			@textarea.bind 'keydown.languageBox.highlight', 'alt+b', (event) ->
+				event.preventDefault()
+				replaceSelectionWithText { element: self.textarea, text: "[#{self.textarea.caret().text}]" }
+
 			return this
 
 		bindKeyCombinations: ->
@@ -114,22 +134,31 @@ closure = ($) ->
 					@combinations.push format.replace('NUMBER', number)
 
 		setUpAutocomplete: ->
-			@textarea.autocomplete $.extend({}, @options.autocomplete, { appendTo: '#' + @box.attr('id') })
+			if @useAutocomplete
+				@textarea.autocomplete $.extend({}, @options.autocomplete, { appendTo: '#' + @box.attr('id') })
+
 			return this
 
+	# Dependencies:
+	# 1. jQuery Caret: http://code.google.com/p/jcaret
+	# 2. jQuery Identify: http://stackoverflow.com/questions/470772/does-jquery-have-an-equivalent-to-prototypes-element-identify#answer-2821241
+	# 3. jQuery Hotkeys: https://github.com/jeresig/jquery.hotkeys
+	# 4. jQuery UI Autocomplete: http://jqueryui.com/demos/autocomplete
 	$.fn.languageBox = (options) ->
 		options = $.extend {}, $.fn.languageBox.defaults, options || {}
 
 		return this.each () ->
 			box = new Box $(this), options
-			box.buildStructure().setUpData().bindEvents().setUpAutocomplete()
+			box.buildStructure().bindEvents().setUpData().setUpAutocomplete()
  
 	$.fn.languageBox.defaults =
 		combinationFormats:
 			small: 'alt+NUMBER'
 			capital: 'alt+shift+NUMBER'
 
+		word: ''
 		lang: 'en'
+		textareaNameFormat: 'translations[LANG]'
 
 		specialLetter:
 			switcher: /shift/ # difference between combinationFormat for small and capital letter as regexp
@@ -152,6 +181,9 @@ closure = ($) ->
 		sourceUrl: '/'
 		imagesDirectory: '/assets'
 
+		termMapper: (text) ->
+			return text.replace(/\[|\]/g, '')
+
 		autocomplete:
 			minLength: 2
 
@@ -173,8 +205,12 @@ closure = ($) ->
 			source: (request, response) ->
 				textarea = this.element[0]
 				data = $.data textarea, 'languageBox'
+				term = data.termMapper $(textarea).val()
 
-				$.getJSON data.sourceUrl, { term: $(textarea).val(), lang: data.lang }, (data) ->
-					response data
+				if data.sourceUrl.length > 0
+					$.getJSON data.sourceUrl, { term: term, lang: data.lang }, (data) ->
+						response data
+				else
+					[]
 
 closure jQuery

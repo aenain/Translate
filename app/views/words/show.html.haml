@@ -1,17 +1,50 @@
-%p#notice= notice
+%h1 Word
 
-%p
-  %b Name:
-  = @word.name
-%p
-  %b Language:
-  = @word.lang
+#show
+  .word-box{ lang: @word.lang }
+    .lang
+      = image_tag "flag-#{@word.lang}.png", :class => 'flag'
 
-- unless @translations.blank?
-  %ul
-    - @translations.each do |translation|
-      %li #{translation.name} #{translation.lang}
+    %ul
+      %li.clickable= @word.name(highlight: true)
 
-= link_to 'Edit', edit_word_path(@word)
-\|
-= link_to 'Back', words_path
+#edit.hidden
+  = form_for @word, :remote => true do |f|
+    .language-box{ lang: @word.lang }
+
+    .actions
+      = f.submit "Save!"
+
+%h1 Translations
+
+- @translations.each do |(lang, translations)|
+  .word-box{ lang: lang }
+    %ul
+      - translations.each do |translation|
+        %li.word.clickable.removeable{ title: translation.name }
+          = link_to '', translation, :method => :delete, :remote => true, :class => 'remove'
+          = link_to translation.highlight, translation, :class => 'block'
+
+    .lang
+      =image_tag "flag-#{lang}.png", :class => 'flag'
+
+= link_to "Add Translation", new_word_path(word_id: @word)
+
+/ there has to be javascript instead of coffeescript because of problems with different encodings
+:javascript
+  $(function() {
+    $('#edit .language-box').languageBox({ word: "#{@word.name}", textareaNameFormat: 'word[name]' });
+  });
+
+:coffeescript
+  $ () ->
+    $(".word-box ul li.removeable .remove").bind 'click.hideAfterRemove', () -> $(this).parent().remove()
+    $("#show .word-box .clickable").bind 'click.renderEdit', () ->
+      $("#show, #edit").toggleClass('hidden')
+      $("#edit textarea").focus()
+
+    $("#edit form").bind 'submit.renderShow', () ->
+      word = $("#edit").find('textarea').val()
+      $("#show .word-box .clickable").text word
+
+      $("#show, #edit").toggleClass('hidden')

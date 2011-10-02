@@ -7,7 +7,7 @@ class Search
 
   def words
     # TODO! wymyśleć jak rozpoznawać czy wprowadzono: "sich waschen" czy "essen de"
-    @search = query.match /^(?<word>[[:alnum:]'\-&]+)(?:\s(?<options>#{lang_options_regexp})?)?$/
+    @search = query.match /^(?<word>[[:alnum:] '\-&]+)(?:\s(?<options>#{lang_options_regexp})?)?$/
 
     unless @search.nil?
       @word, @original_lang, @translated_lang = @search[:word], @search[:original], @search[:translated]
@@ -33,6 +33,6 @@ class Search
   protected
 
   def lang_options_regexp
-    /(?<original>[[:alpha:]]{2})(?:\|(?<translated>[[:alpha:]]{2})?)?/
+    /\/(?<original>[[:alpha:]]{2})(?:\/(?<translated>[[:alpha:]]{2})?)?/
   end
 end

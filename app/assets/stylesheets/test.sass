@@ -1,7 +1,7 @@
-$languageBoxWidth: 500px
+$languageBoxWidth: 550px
 $languageBoxTextareaHeight: 50px
 
-.language-box
+.language-box, .word-box
 	width: $languageBoxWidth
 	padding: 5px
 	background-color: #fff
@@ -21,14 +21,14 @@ $languageBoxTextareaHeight: 50px
 			max-width: $languageBoxWidth - 50px
 			float: left
 
-		.lang
-			float: right
-			padding: 3px 5px
+	.lang
+		float: right
+		padding: 3px 5px
 
-			.flag
-				width: 18px
-				height: 11px
-				border: 1px solid #000
+		.flag
+			width: 18px
+			height: 11px
+			border: 1px solid #000
 
 	ul
 		overflow: hidden
@@ -43,6 +43,10 @@ $languageBoxTextareaHeight: 50px
 			line-height: 13px !important
 			color: #aaa
 
+			a
+				color: inherit
+				text-decoration: inherit
+
 			&.clickable, &.ui-menu-item
 				cursor: pointer
 
@@ -52,6 +56,48 @@ $languageBoxTextareaHeight: 50px
 				border-color: #ccc
 				box-shadow: 0 0 1px #ddd
 				border-radius: 2px
+
+			&.clickable
+				&.removeable
+					padding-right: 12px
+
+					.remove
+						position: absolute
+						top: -2px
+						right: 1px
+						display: none
+						color: #ddd
+						text-decoration: none
+
+						&:before
+							content: 'x'
+
+						&:hover
+							color: #888
+
+					&:hover
+						.remove
+							display: block
+
+					&.block
+						display: block
+						padding: 3px 5px
+						margin: -3px -5px
+
+	form
+		float: left
+
+		input[type='text']
+			border: 0
+			width: 450px
+
+			padding: 0 0 0 5px
+			font: bold 11px 'Lucida Grande'
+			line-height: 13px !important
+			color: #777
+
+			&:focus
+				outline: none
 
 	textarea
 		resize: none
@@ -73,5 +119,62 @@ $languageBoxTextareaHeight: 50px
 		&.with-prompts
 			padding-bottom: 2px
 
+		&.with-important-part
+			width: 		 $languageBoxWidth - 6px - 180px
+			min-width: $languageBoxWidth - 6px - 180px
+			max-width: $languageBoxWidth - 6px - 180px
+
 		&:focus
 			outline: none
+
+		.important-part
+			
+
+.word-box
+	overflow: hidden
+	height: auto
+
+	ul
+		float: left
+		max-width: $languageBoxWidth - 50px
+
+.clickable
+	.add
+		font: bold 14px Arial
+		line-height: 13px
+		opacity: 0.2
+
+	&:hover
+		.add
+			opacity: 1.0
+
+.word-box, form
+	margin-bottom: 10px
+
+.actions
+	text-align: right
+	padding: 5px
+	overflow: hidden
+	width: 557px
+
+	input[type='button'], input[type='submit']
+		background-color: #f7f7f7
+		color: #777
+		border: 1px solid #ccc
+		box-shadow: 0 0 1px #ddd
+		border-radius: 2px
+		margin: 0
+		padding: 6px 10px
+		cursor: pointer
+		font: bold 12pt Helvetica
+
+		&.primary
+			color: #4e5953
+			text-shadow: 0 1px 1px #fff
+
+		&.secondary
+			color: #999
+			text-shadow: 0 1px 1px #fff
+
+		&:hover
+			box-shadow: 0 0 0 #ddd

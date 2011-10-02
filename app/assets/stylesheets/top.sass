@@ -2,52 +2,72 @@
 
 body
 	background-color: #fff
+	border: 3px solid #37ce80
+	border-width: 3px 0 5px 0
+
+body > div
+	margin: 0 auto
+	min-width: 640px
+	max-width: 880px
 
 .top-bar
-	width: 100%
-	background-color: #fff280
+	background-color: #fff /* #fff280 */
+	height: 75px
 
 	overflow: hidden
 	text-align: right
-	border-bottom: 1px solid #ebebeb
 
 	.navigation
 		float: right
-		width: 400pt
 
 		.menu
 			display: inline-block
-			margin-right: 20pt
 
 			li
 				display: inline-block
-				padding: 8pt 10pt 6pt 8pt
-				color: #fff
+				padding: 8px
+				margin-right: 4px
+				color: #37ce80
 				font-weight: bold
 
 				&:last-child
 					border-right: 0
 
 				&:hover
-					color: #fff
+					color: #4e5953
 
 				&.active
-					color: #4E5953
+					background-color: #37ce80
+					border-radius: 0 0 5px 5px
+					color: #fff
 
 					a
-						cursor: default
+						font-weight: bold
+						text-shadow: 0 -1px 1px #888
 
 				a
 					color: inherit
-					text-decoration: none
 					font-size: 12pt
+					font-family: Helvetica
+					text-decoration: none
 
 				&.search
-					padding-left: 20pt
-					margin-right: 8pt
+					padding-left: 10px
+					padding-bottom: 0
 
 					input[type='search']
-						font-size: 12pt
-						width: 150pt
-						margin: -2pt 0 0 0
+						font-size: 12px
+						width: 150px
+						margin: -3px 0 0 0
 						color: #888
+						opacity: 0.2
+
+.footer
+	text-align: center
+	padding: 20px 0 8px 0
+	color: #ccc
+	font-size: 11px
+
+	&:hover
+		.author
+			color: #4e5953

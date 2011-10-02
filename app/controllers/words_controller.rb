@@ -3,29 +3,29 @@ class WordsController < ApplicationController
     @search = params[:search]
 
     @scope = @search.present? ? Search.new(@search).words : Word
-    @words = @scope.all(order: 'lang DESC, name ASC')
+    @words = @scope.all(order: 'name ASC').group_by(&:lang)
   end
 
   def show
     @word = Word.find(params[:id])
-    @translations = @word.translations.all(order: 'lang DESC, name ASC')
+    @translations = @word.translations.all(order: 'name ASC').group_by(&:lang)
   end
 
   def new
-    @word = Word.new
-  end
+    if params[:word_id].present?
+      @word = Word.find_by_id_and_lang(params[:word_id], Settings.language.primary.symbol)
+    end
 
-  def edit
-    @word = Word.find(params[:id])
+    @word ||= Word.new(lang: Settings.language.primary.symbol)
   end
 
   def create
-    @word = Word.first(conditions: params[:word]) || Word.new(params[:word])
+    @word = Word.find_or_build(params[:word])
 
     if @word.save!
-      %w{en de}.each do |lang|
-        next unless params[lang].present?
-        @word.translations.create!(name: params[lang], lang: lang)
+      params[:translations].each do |(lang, name)|
+        next unless name.present?
+        @word.translations.find_or_create_by_lang_and_name!(lang, name)
       end
 
       redirect_to @word
@@ -36,11 +36,12 @@ class WordsController < ApplicationController
 
   def update
     @word = Word.find(params[:id])
+    @word.update_attributes(params[:word]) # TODO! sensowna obsługa błedów...
 
-    if @word.update_attributes(params[:word])
-      redirect_to @word
+    if request.xhr?
+      render :nothing => true
     else
-      render :edit
+      redirect_to word_path
     end
   end
 
@@ -52,7 +53,7 @@ class WordsController < ApplicationController
   end
 
   def autocomplete
-    @query = "#{params[:term]} #{params[:lang]}"
+    @query = "#{params[:term]} /#{params[:lang]}"
     @words = Search.new(@query).words.all(order: 'name ASC', limit: 10).map { |w| w.name.force_encoding('utf-8') }
 
     render :json => @words

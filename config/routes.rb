@@ -5,9 +5,7 @@ Translate::Application.routes.draw do
     end
   end
 
-  resources :posts
-
-  match 'test' => 'words#test'
+  match '/' => 'words#index'
 
   # The priority is based upon order of creation:
   # first created -> highest priority.

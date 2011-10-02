@@ -1,4 +1,36 @@
-@import 'generic'
+@import 'layout'
 
 .content > *
 	margin-left: 20px
+
+.content
+	.word-box, form
+		margin-bottom: 10px
+
+	.actions
+		text-align: right
+		padding: 5px
+		overflow: hidden
+		width: 557px
+
+		input[type='button'], input[type='submit']
+			background-color: #f7f7f7
+			color: #777
+			border: 1px solid #ccc
+			box-shadow: 0 0 1px #ddd
+			border-radius: 2px
+			margin: 0
+			padding: 6px 10px
+			cursor: pointer
+			font: bold 12pt Helvetica
+
+			&.primary
+				color: #4e5953
+				text-shadow: 0 1px 1px #fff
+
+			&.secondary
+				color: #999
+				text-shadow: 0 1px 1px #fff
+
+			&:hover
+				box-shadow: 0 0 0 #ddd

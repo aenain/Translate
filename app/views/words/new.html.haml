@@ -25,6 +25,11 @@
   $ () ->
     $(".content .language-input:not('.primary-language')").languageBox { sourceUrl: '#{autocomplete_words_path}' }
 
+    # pressing enter on focused textareas indicates continuing the flow
+    $('.content .language-input textarea').bind 'keydown.nextStep', 'return', (event) ->
+      event.preventDefault()
+      $(this).parents('.language-input').siblings('.actions').children('.primary:visible').trigger 'click'
+
     steps =
       range:
         min: 1

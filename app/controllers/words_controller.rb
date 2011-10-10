@@ -3,12 +3,12 @@ class WordsController < ApplicationController
     @search = params[:search]
 
     @scope = @search.present? ? Search.new(@search).words : Word
-    @words = @scope.all(order: 'name ASC').group_by(&:lang)
+    @words = @scope.all(conditions: { lang: Word::LANGUAGES }, order: 'name ASC').group_by(&:lang)
   end
 
   def show
     @word = Word.find(params[:id])
-    @translations = @word.translations.all(order: 'name ASC').group_by(&:lang)
+    @translations = @word.translations.all(conditions: { lang: Word::LANGUAGES }, order: 'name ASC').group_by(&:lang)
   end
 
   def new

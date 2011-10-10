@@ -4,10 +4,10 @@
   = f.hidden_field :lang
   = hidden_field_tag :step, 1
 
-  #polish{ lang: 'pl' }
+  .language-input.primary-language{ lang: Settings.language.primary.symbol }
 
-  #german.hidden{ lang: 'de' }
-  #english.hidden{ lang: 'en' }
+  - (Word::LANGUAGES - [Settings.language.primary.symbol]).each do |lang|
+    .language-input.hidden{ lang: lang }
 
   .actions
     %input.prev.secondary.hidden{ type: 'button', value: 'Back' }
@@ -17,18 +17,18 @@
 
 :javascript
   $(function() {
-    $('#polish').languageBox({ sourceUrl: '#{autocomplete_words_path}', textareaNameFormat: 'word[name]', word: '#{@word.name}' });
-    $("#polish textarea").focus()
+    $('.content .primary-language').languageBox({ sourceUrl: '#{autocomplete_words_path}', textareaNameFormat: 'word[name]', word: '#{@word.name}' });
+    $('.content .primary-language textarea').focus()
   });
 
 :coffeescript
   $ () ->
-    $('#german, #english').languageBox { sourceUrl: '#{autocomplete_words_path}' }
+    $(".content .language-input:not('.primary-language')").languageBox { sourceUrl: '#{autocomplete_words_path}' }
 
     steps =
       range:
         min: 1
-        max: 3
+        max: $('.content .language-input').length
 
       step:
         get: () -> Number $("#step").val()

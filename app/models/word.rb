@@ -1,5 +1,5 @@
 class Word < ActiveRecord::Base
-  LANGUAGES = %w{pl en de}
+  LANGUAGES = %w{pl de} # pl en de
 
   has_many :translatings, as: :original, dependent: :destroy
   has_many :translations, through: :translatings, source: :translated, source_type: self.name, uniq: true do

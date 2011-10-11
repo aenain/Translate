@@ -1,6 +1,7 @@
 class Word < ActiveRecord::Base
   LANGUAGES = %w{pl de} # pl en de
 
+  has_many :exam_entries, as: :question, dependent: :destroy
   has_many :translatings, as: :original, dependent: :destroy
   has_many :translations, through: :translatings, source: :translated, source_type: self.name, uniq: true do
     # there was a problem with this association when called methods like below (find_or_create_by...)

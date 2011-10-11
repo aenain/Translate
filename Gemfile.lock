@@ -124,6 +124,7 @@ GEM
       hike (~> 1.2)
       rack (~> 1.0)
       tilt (!= 1.3.0, ~> 1.1)
+    state_machine (1.0.2)
     thin (1.2.11)
       daemons (>= 1.0.9)
       eventmachine (>= 0.12.6)
@@ -156,6 +157,7 @@ DEPENDENCIES
   ruby-debug19
   sass-rails (~> 3.1.0)
   shoulda
+  state_machine
   thin
   turn
   uglifier

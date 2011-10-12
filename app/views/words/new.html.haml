@@ -1,6 +1,7 @@
 %h1 New Translation
 
-= form_for @word do |f|
+/ we have to force route because (against convention) @word can be an existing word...
+= form_for @word, url: words_path, method: :post do |f|
   = f.hidden_field :lang
   = hidden_field_tag :step, 1
 

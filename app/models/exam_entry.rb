@@ -9,11 +9,13 @@ class ExamEntry < ActiveRecord::Base
   validates :question_type, presence: true
 
   scope :awaiting, where(correct: nil)
+  scope :wrong, where(correct: false)
+  scope :correct, where(correct: true)
 
   def try_answer(answer)
     raise ArgumentError, "cannot answer question twice!" unless self.correct.nil?
 
-    if question.translations.by_name(answer).by_lang(answer_lang).present?
+    if possible_answers.by_name(answer).present?
       self.correct = true
       exam.score += self.score
     else
@@ -24,5 +26,9 @@ class ExamEntry < ActiveRecord::Base
     exam.save!
 
     return correct
+  end
+
+  def possible_answers
+    question.translations.by_lang(answer_lang)
   end
 end

@@ -25,6 +25,7 @@ class ExamsController < ApplicationController
   def summary
     session.delete(:current_exam_id)
     @exam = Exam.find(params[:id])
+    @wrong_entries = @exam.entries.wrong.includes(:question)
   end
 
   def answer

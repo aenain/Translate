@@ -3,20 +3,20 @@ class WordsController < ApplicationController
     @search = params[:search]
 
     @scope = @search.present? ? Search.new(@search).words : Word
-    @words = @scope.all(conditions: { lang: Word::LANGUAGES }, order: 'name ASC').group_by(&:lang)
+    @words = @scope.all(conditions: { lang: Language::AVAILABLE }, order: 'name ASC').group_by(&:lang)
   end
 
   def show
     @word = Word.find(params[:id])
-    @translations = @word.translations.all(conditions: { lang: Word::LANGUAGES }, order: 'name ASC').group_by(&:lang)
+    @translations = @word.translations.all(conditions: { lang: Language::AVAILABLE }, order: 'name ASC').group_by(&:lang)
   end
 
   def new
     if params[:word_id].present?
-      @word = Word.find_by_id_and_lang(params[:word_id], Settings.language.primary.symbol)
+      @word = Word.find_by_id_and_lang(params[:word_id], Language::PRIMARY)
     end
 
-    @word ||= Word.new(lang: Settings.language.primary.symbol)
+    @word ||= Word.new(lang: Language::PRIMARY)
   end
 
   def create

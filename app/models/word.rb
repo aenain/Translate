@@ -1,6 +1,4 @@
 class Word < ActiveRecord::Base
-  LANGUAGES = %w{pl de} # pl en de
-
   has_many :exam_entries, as: :question, dependent: :destroy
   has_many :translatings, as: :original, dependent: :destroy
   has_many :translations, through: :translatings, source: :translated, source_type: self.name, uniq: true do
@@ -63,5 +61,9 @@ class Word < ActiveRecord::Base
     name.gsub!(/(#{Regexp.escape(highlight)})/, '[\1]') if options[:highlight] && highlight.present? && name != highlight
 
     name
+  end
+
+  def for_js
+    { name: name.force_encoding('utf-8'), lang: lang }
   end
 end

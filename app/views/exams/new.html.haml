@@ -1,0 +1,7 @@
+%h1 New Test
+
+= form_for @exam do |f|
+  = f.select :lang, Language::FOREIGN
+
+  .actions
+    = f.submit 'Create!', class: 'primary'

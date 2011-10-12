@@ -1,0 +1,50 @@
+%h1 Question
+
+#question.word-box
+  .lang
+    = image_tag "flag-#{@entry.question.lang}.png", class: 'flag'
+
+  %ul
+    %li= @entry.question.name
+
+%h1 Answer
+
+= form_for @entry, url: answer_exam_path, method: :post, remote: true do |f|
+  = f.hidden_field :id
+  #answer{ lang: @entry.answer_lang }
+
+  .actions
+    = f.submit 'Continue'
+
+:coffeescript
+  $ () ->
+    updateWordBox = ($box, question) ->
+      $box.find('.lang img.flag').attr { 'src': '/assets/flag-' + question.lang + '.png', 'alt': 'Flag-' + question.lang }
+      $box.find('ul li').text(question.name)
+
+    submitForm = ($form) ->
+      $.post $form.attr('action'), $form.serialize(), (response) ->
+        if response.redirect?
+          window.location.href = response.redirect
+          return false
+
+        updateWordBox $('#question'), response.question
+        updateForm $form, $.extend({ reset: true }, response.entry)
+
+    updateForm = ($form, options) ->
+      if options.reset?
+        action = '#{answer_exam_path}'.replace(/\d+/, options.id)
+        $form.attr('action', action).find('#exam_entry_id').val(options.id)
+        $('#answer').attr('lang', options.answer_lang).empty()
+
+      $('#answer').languageBox { autocomplete: false, textareaNameFormat: 'exam_entry[answer]' }
+      $('#answer textarea').focus().bind 'keydown.nextQuestion', 'return', (event) ->
+        event.preventDefault()
+        $form.trigger 'submitForm'
+
+    $form = $('.edit_exam_entry').bind 'submitForm', (event) -> submitForm($(this))
+    $form.find("input[type='submit']").bind 'click', (event) ->
+      event.preventDefault()
+      $form.trigger('submitForm')
+
+    updateForm $form, {}

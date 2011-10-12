@@ -4,9 +4,9 @@
   = f.hidden_field :lang
   = hidden_field_tag :step, 1
 
-  .language-input.primary-language{ lang: Settings.language.primary.symbol }
+  .language-input.primary-language{ lang: Language::PRIMARY }
 
-  - (Word::LANGUAGES - [Settings.language.primary.symbol]).each do |lang|
+  - (Language::FOREIGN).each do |lang|
     .language-input.hidden{ lang: lang }
 
   .actions

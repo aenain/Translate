@@ -44,5 +44,10 @@ module Translate
 
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
+
+    config.action_dispatch.session = {
+      :key => '_translate_session',
+      :secret => '92130niuaw847nz120412bjk12f5j#'
+    }
   end
 end

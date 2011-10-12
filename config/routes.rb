@@ -5,6 +5,13 @@ Translate::Application.routes.draw do
     end
   end
 
+  resources :exams, :only => [:new, :create, :show] do
+    member do
+      post 'answer'
+      get 'summary'
+    end
+  end
+
   match '/' => 'words#index'
 
   # The priority is based upon order of creation:

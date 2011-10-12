@@ -1,5 +1,5 @@
 - if @words.values.compact.present?
-  - Word::LANGUAGES.each do |lang|
+  - Language::AVAILABLE.each do |lang|
     - if @words[lang].present?
       .word-box
         .lang

@@ -3,7 +3,7 @@ class Exam < ActiveRecord::Base
 
   has_many :entries, class_name: 'ExamEntry', order: 'position', dependent: :destroy
 
-  validates :lang, presence: true, inclusion: { in: Word::LANGUAGES }
+  validates :lang, presence: true, inclusion: { in: Language::AVAILABLE }
 
   after_create :create_entries
 
@@ -11,7 +11,7 @@ class Exam < ActiveRecord::Base
     words = self.class.select_words_by_languages(languages)
 
     words.each do |word|
-      answer_lang = (languages - [word.lang]).first || Settings.language.primary.symbol
+      answer_lang = (languages - [word.lang]).first || Language::PRIMARY
       entries.create(question: word, answer_lang: answer_lang)
     end
 
@@ -24,7 +24,7 @@ class Exam < ActiveRecord::Base
   protected
 
   def languages
-    [Settings.language.primary.symbol, lang]
+    [Language::PRIMARY, lang]
   end
 
   def self.select_words_by_languages(languages = [])

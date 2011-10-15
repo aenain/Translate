@@ -1,0 +1,99 @@
+.language-box, .word-box {
+  width: 550px;
+  padding: 5px;
+  background-color: white;
+  border: 1px solid #cccccc; }
+  .language-box.focus, .language-box:hover, .word-box.focus, .word-box:hover {
+    border-color: #bbbbbb;
+    box-shadow: inset 0 0 1px 0 #cccccc; }
+  .language-box .main-bar, .word-box .main-bar {
+    overflow: hidden;
+    width: 100%;
+    padding-bottom: 3px;
+    border-bottom: 1px solid #eeeeee; }
+    .language-box .main-bar ul, .word-box .main-bar ul {
+      max-width: 500px;
+      float: left; }
+  .language-box .lang, .word-box .lang {
+    float: right;
+    padding: 3px 5px; }
+    .language-box .lang .flag, .word-box .lang .flag {
+      width: 18px;
+      height: 11px;
+      border: 1px solid black; }
+  .language-box ul, .word-box ul {
+    overflow: hidden; }
+    .language-box ul li, .word-box ul li {
+      display: block;
+      float: left;
+      position: relative;
+      padding: 3px 5px;
+      border: 1px solid white;
+      font: bold 11px "Lucida Grande";
+      line-height: 13px !important;
+      color: #aaaaaa; }
+      .language-box ul li a, .word-box ul li a {
+        color: inherit;
+        text-decoration: inherit; }
+      .language-box ul li.clickable, .language-box ul li.ui-menu-item, .word-box ul li.clickable, .word-box ul li.ui-menu-item {
+        cursor: pointer; }
+      .language-box ul li.focus, .language-box ul li.clickable:hover, .word-box ul li.focus, .word-box ul li.clickable:hover {
+        background-color: #f7f7f7;
+        color: #777777;
+        border-color: #cccccc;
+        box-shadow: 0 0 1px #dddddd;
+        border-radius: 2px; }
+      .language-box ul li.clickable.removeable, .word-box ul li.clickable.removeable {
+        padding-right: 12px; }
+        .language-box ul li.clickable.removeable .remove, .word-box ul li.clickable.removeable .remove {
+          position: absolute;
+          top: -2px;
+          right: 1px;
+          display: none;
+          color: #dddddd;
+          text-decoration: none; }
+          .language-box ul li.clickable.removeable .remove:before, .word-box ul li.clickable.removeable .remove:before {
+            content: "x"; }
+          .language-box ul li.clickable.removeable .remove:hover, .word-box ul li.clickable.removeable .remove:hover {
+            color: #888888; }
+        .language-box ul li.clickable.removeable:hover .remove, .word-box ul li.clickable.removeable:hover .remove {
+          display: block; }
+        .language-box ul li.clickable.removeable.block, .word-box ul li.clickable.removeable.block {
+          display: block;
+          padding: 3px 5px;
+          margin: -3px -5px; }
+  .language-box form, .word-box form {
+    float: left; }
+    .language-box form input[type='text'], .word-box form input[type='text'] {
+      border: 0;
+      width: 450px;
+      padding: 0 0 0 5px;
+      font: bold 11px "Lucida Grande";
+      line-height: 13px !important;
+      color: #777777; }
+      .language-box form input[type='text']:focus, .word-box form input[type='text']:focus {
+        outline: none; }
+  .language-box textarea, .language-box input[type='text'], .word-box textarea, .word-box input[type='text'] {
+    outline: none;
+    margin: 0;
+    padding: 3px;
+    border: 0;
+    font: normal 11px "Lucida Grande"; }
+  .language-box textarea, .word-box textarea {
+    resize: none;
+    width: 544px;
+    min-width: 544px;
+    max-width: 544px;
+    height: 50px;
+    min-height: 50px;
+    max-height: 50px;
+    padding-bottom: 23px; }
+    .language-box textarea.with-prompts, .word-box textarea.with-prompts {
+      padding-bottom: 2px; }
+
+.word-box {
+  overflow: hidden;
+  height: auto; }
+  .word-box ul {
+    float: left;
+    max-width: 500px; }

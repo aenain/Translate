@@ -23,15 +23,51 @@ closure = ($) ->
 			@lang = @box.attr('lang') || @options.lang
 			@useAutocomplete = (typeof @options.autocomplete == 'object' and @options.autocomplete)
 
-		buildStructure: ->
-			@box.addClass('language-box').identify('language-box')
+		buildLayout: ->
+			this.addBoxAttributes()
+
+			switch @options.layout
+				when 'extended' then this.buildExtendedStructure()
+				when 'compact' then this.buildCompactStructure()
+				else $.error('Given type of layout is not supported.')
+
+			return this
+
+		addBoxAttributes: ->
+			@box.addClass('language-box').identify('language-box').css(this.boxDimensions())
+
+		boxDimensions: ->
+		  dimensions =
+		    height: @options.height || @options.layoutDimensions[@options.layout].height
+		    width: @options.width || @options.layoutDimensions[@options.layout].width
+
+		  return dimensions
+
+		buildExtendedStructure: ->
+		  this.buildVisibleMainBar()
+		  this.buildInputField()
+		  this.prepareLanguageMarker().appendTo(@mainBar)
+
+		buildCompactStructure: ->
+		  this.buildHiddenMainBar()
+		  this.buildInputField()
+		  this.prepareLanguageMarker().appendTo(@box)
+
+		buildVisibleMainBar: ->
 			this.buildMainBar()
-			this.buildTextarea()
+			this.buildSpecialLetterList()
+
+			return this
+
+		buildHiddenMainBar: ->
+		  this.buildMainBar()
+		  @mainBar.css { 'display': 'none' }
+
+		  this.buildSpecialLetterList()
+		  return this
 
 		buildMainBar: ->
-			@mainBar = $("<div></div>").addClass('main-bar').appendTo(@box)
-			this.buildSpecialLetterList()
-			this.buildLanguageMarker()
+		  @mainBar = $("<div></div>").addClass('main-bar').appendTo(@box)
 
 		buildSpecialLetterList: ->
 			@specialLetterList = $("<ul></ul>").addClass('special-letters').appendTo(@mainBar)
@@ -48,49 +84,81 @@ closure = ($) ->
 
 			return $.merge(@letters, capitalLetters)
 
-		buildLanguageMarker: ->
-			@languageMarker = $("<div></div>").addClass('lang').appendTo(@mainBar)
+		prepareLanguageMarker: ->
+			@languageMarker = $("<div></div>").addClass('lang')
 			@flag = $("<img />").addClass('flag').attr({ src: "#{@options.imagesDirectory}/flag-#{@lang}.png", alt: "flag-#{@lang}" }).appendTo(@languageMarker)
-			return this
+			return @languageMarker
 
-		buildTextarea: ->
-			name = @options.textareaNameFormat.replace('LANG', @lang)
-			@textarea = $("<textarea></textarea>").attr('name', name).val(@options.word).appendTo(@box)
-			return this
+		buildInputField: ->
+		  name = @options.inputFieldNameFormat.replace('LANG', @lang)
+		  cssParams = this.inputFieldCssParams()
+
+		  if @options.layout == 'extended'
+		  	@inputField = $("<textarea></textarea>")
+		  else
+		    @inputField = $("<input />").attr('type', 'text')
+
+		  @inputField.val(@options.word).css(cssParams).appendTo(@box)
+		  return this
+
+		inputFieldCssParams: ->
+		  boxHeight = parseFloat this.boxDimensions().height
+		  boxWidth = parseFloat this.boxDimensions().width
+
+		  switch @options.layout
+		    when 'extended'
+		      height = boxHeight - 58 # TODO! don't hardcode this values...
+		      width = boxWidth - 6
+		    when 'compact'
+		      height = boxHeight - 6
+		      width = boxWidth - 41
+
+		  height = height.toString() + 'px'
+		  width = width.toString() + 'px'
+
+		  params =
+		    minWidth: width
+		    width: width
+		    maxWidth: width
+		    minHeight: height
+		    height: height
+		    maxHeight: height
+
+		  return params
 
 		setUpData: ->
 			if @useAutocomplete
 				# $.data requires a specific DOM object as the first argument (not $-wrapped)
-				$.data @textarea[0], 'languageBox', { sourceUrl: @options.sourceUrl, lang: @lang, termMapper: @options.termMapper }
+				$.data @inputField[0], 'languageBox', { sourceUrl: @options.sourceUrl, lang: @lang, termMapper: @options.termMapper }
 
 			return this
 
 		bindEvents: ->
 			this.bindSpecialLetterEvents()
-			this.bindTextareaEvents()
+			this.bindInputFieldEvents()
 
 		bindSpecialLetterEvents: ->
 			self = this
 
 			@specialLetterList.children('li').bind 'click.languageBox.specialLetter', () ->
 				# now this points to clicked element (li)
-				replaceSelectionWithText { element: self.textarea, text: $(this).text() }, () ->
+				replaceSelectionWithText { element: self.inputField, text: $(this).text() }, () ->
 					if @useAutocomplete
 				  	# autocomplete search has to be triggered (changing a value of the input via js doesn't automatically fires up autocomplete)
-				  	self.textarea.autocomplete('search')
+				  	self.inputField.autocomplete('search')
 
 			return this
 
-		bindTextareaEvents: ->
+		bindInputFieldEvents: ->
 			this.bindFocusEvents()
 			this.bindHighlighting()
 			this.bindKeyCombinations()
 
 		bindFocusEvents: ->
-			@textarea.bind 'focus.languageBox.textarea', () -> $(this).parent().addClass('focus')
-			@textarea.bind 'blur.languageBox.textarea', () -> $(this).parent().removeClass('focus')
+			@inputField.bind 'focus.languageBox.inputField', () -> $(this).parent().addClass('focus')
+			@inputField.bind 'blur.languageBox.inputField', () -> $(this).parent().removeClass('focus')
 
-			@textarea.bind 'focus.languageBox.setPosition', () ->
+			@inputField.bind 'focus.languageBox.setPosition', () ->
 				position = $(this).val().length
 				$(this).caret(position, position)
 
@@ -99,9 +167,9 @@ closure = ($) ->
 		bindHighlighting: ->
 			self = this
 
-			@textarea.bind 'keydown.languageBox.highlight', 'alt+b', (event) ->
+			@inputField.bind 'keydown.languageBox.highlight', 'alt+b', (event) ->
 				event.preventDefault()
-				replaceSelectionWithText { element: self.textarea, text: "[#{self.textarea.caret().text}]" }
+				replaceSelectionWithText { element: self.inputField, text: "[#{self.inputField.caret().text}]" }
 
 			return this
 
@@ -110,14 +178,14 @@ closure = ($) ->
 			self = this
 
 			for combination in @combinations
-				@textarea.bind 'keydown.languageBox.combinations', combination, (event) ->
+				@inputField.bind 'keydown.languageBox.combinations', combination, (event) ->
 					event.preventDefault()
 
 					nth = Number event.data.match(/\d+$/)[0]
 					specialLetter = self.options.specialLetter
 
 					nth += (specialLetter.list[self.lang]?.small || []).length if specialLetter.switcher.test(event.data)
-					$letter = self.textarea.siblings('.main-bar').find(".special-letters li:nth-child(#{String(nth)})")
+					$letter = self.inputField.siblings('.main-bar').find(".special-letters li:nth-child(#{String(nth)})")
 
 					if $letter?
 						$letter.trigger('click.languageBox.specialLetter')
@@ -135,7 +203,7 @@ closure = ($) ->
 
 		setUpAutocomplete: ->
 			if @useAutocomplete
-				@textarea.autocomplete $.extend({}, @options.autocomplete, { appendTo: '#' + @box.attr('id') })
+				@inputField.autocomplete $.extend({}, @options.autocomplete, { appendTo: '#' + @box.attr('id') })
 
 			return this
 
@@ -149,7 +217,7 @@ closure = ($) ->
 
 		return this.each () ->
 			box = new Box $(this), options
-			box.buildStructure().bindEvents().setUpData().setUpAutocomplete()
+			box.buildLayout().bindEvents().setUpData().setUpAutocomplete()
  
 	$.fn.languageBox.defaults =
 		combinationFormats:
@@ -158,7 +226,23 @@ closure = ($) ->
 
 		word: ''
 		lang: 'en'
-		textareaNameFormat: 'translations[LANG]'
+		inputFieldNameFormat: 'translations[LANG]'
+
+		# these parameters take precedence (if have values...) before those specified for certain layouts
+		width: null
+		height: null
+
+		layout: 'extended' # extended | compact
+    # extended - with place for special letters and autocomplete
+    # compact - without special letters, with input[type=text] instead of textarea and with autocomplete (we suggest to turn it off)
+
+		layoutDimensions:
+		  extended:
+		    width: '550px'
+		    height: '108px'
+		  compact:
+		    width: '550px'
+		    height: '21px'
 
 		specialLetter:
 			switcher: /shift/ # difference between combinationFormat for small and capital letter as regexp
@@ -203,9 +287,9 @@ closure = ($) ->
 				menu.children(".ui-menu-item:has(.ui-state-hover)").addClass("focus")
 
 			source: (request, response) ->
-				textarea = this.element[0]
-				data = $.data textarea, 'languageBox'
-				term = data.termMapper $(textarea).val()
+				inputField = this.element[0]
+				data = $.data inputField, 'languageBox'
+				term = data.termMapper $(inputField).val()
 
 				if data.sourceUrl.length > 0
 					$.getJSON data.sourceUrl, { term: term, lang: data.lang }, (data) ->

@@ -1,0 +1,48 @@
+!!! 5
+%html
+  %head
+    %title Translate
+    = stylesheet_link_tag "application"
+    = javascript_include_tag "application", "http://canvg.googlecode.com/svn/trunk/rgbcolor.js", "http://canvg.googlecode.com/svn/trunk/canvg.js"
+    = csrf_meta_tags
+ 
+  %body
+    .top-bar
+      %a{ href: '/' }
+        %canvas#logo
+
+      .navigation
+        %ul.menu
+          %li{ class: controller_name =~ /words/ && 'active' }= link_to 'Words', words_path
+          %li{ class: controller_name =~ /exams/ && 'active' }= link_to 'Test', exam_path_considering_session
+          %li.search
+            %form{ action: words_path }
+              = search_field_tag :search, nil, :placeholder => 'Search'
+
+    .content
+      = yield
+
+    .footer
+      Copyright &copy;
+      - year = { start: 2011, current: Date.today.year }
+      = (year[:current] != year[:start]) ? "#{year[:start]} - #{year[:current]}" : "#{year[:start]}"
+      %span.author Artur Hebda
+
+    :coffeescript
+      focus_search = () -> $('#search').focus()
+
+      combinations = [{ keys: 'alt+f', function: focus_search, prevent: true }]
+
+      for combination in combinations
+        $(document).bind 'keydown', combination.keys, (event) ->
+          event.preventDefault() if combination.prevent
+          combination.function(event)
+
+      $ () ->
+        canvg('logo', '/assets/translate_logo.svg')
+
+        $('#search').bind 'focus.increaseOpacity', () ->
+          $('#search').animate { opacity: 1.0 }, 200
+
+        $('#search').bind 'blur.decreaseOpacity', () ->
+          $('#search').animate { opacity: 0.2 }, 100

@@ -32,26 +32,3 @@
 
 .font-dejavu-bold {
   font-family: "DejaVu Sans Mono Bold"; }
-
-* {
-  font-family: "Lucida Grande", "Arial", sans-serif; }
-
-h1 {
-  padding: 5px 0 10px 0; }
-
-.black {
-  color: black; }
-
-.actions {
-  overflow: hidden; }
-
-.hidden {
-  display: none; }
-
-a {
-  outline: none;
-  color: #37ce80;
-  text-decoration: none;
-  font-weight: bold; }
-  a:hover {
-    color: #4e5953; }

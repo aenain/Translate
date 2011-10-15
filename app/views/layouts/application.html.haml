@@ -2,47 +2,49 @@
 %html
   %head
     %title Translate
-    = stylesheet_link_tag "application"
-    = javascript_include_tag "application", "http://canvg.googlecode.com/svn/trunk/rgbcolor.js", "http://canvg.googlecode.com/svn/trunk/canvg.js"
+    = stylesheet_link_tag "tiles"
+    = javascript_include_tag "application"
     = csrf_meta_tags
  
   %body
-    .top-bar
-      %a{ href: '/' }
-        %canvas#logo
+    .page
+      .top-bar
+        %a{ href: '/' }
+          %canvas#logo
+
+      .clear
 
       .navigation
         %ul.menu
-          %li{ class: controller_name =~ /words/ && 'active' }= link_to 'Words', words_path
-          %li{ class: controller_name =~ /exams/ && 'active' }= link_to 'Test', exam_path_considering_session
-          %li.search
-            %form{ action: words_path }
-              = search_field_tag :search, nil, :placeholder => 'Search'
+          %li.active= link_to 'W', words_path
+          %li= link_to 'T', new_exam_path
+          %li= link_to '?', '#'
 
-    .content
-      = yield
+      .content
+        .title
+          %h1 Heading 1
 
-    .footer
-      Copyright &copy;
-      - year = { start: 2011, current: Date.today.year }
-      = (year[:current] != year[:start]) ? "#{year[:start]} - #{year[:current]}" : "#{year[:start]}"
-      %span.author Artur Hebda
+        %h2 Heading 2
+        %h3 Heading 3
 
-    :coffeescript
-      focus_search = () -> $('#search').focus()
+        %p
+          Regular paragraph with
+          %strong strong
+          and
+          %em em
 
-      combinations = [{ keys: 'alt+f', function: focus_search, prevent: true }]
+        .form
+          %form
+            #polish
 
-      for combination in combinations
-        $(document).bind 'keydown', combination.keys, (event) ->
-          event.preventDefault() if combination.prevent
-          combination.function(event)
+            .actions
+              %input.next{ type: 'button', value: 'Continue' }
+              %input.prev{ type: 'button', value: 'Back' }
 
-      $ () ->
-        canvg('logo', '/assets/translate_logo.svg')
+        /= yield
 
-        $('#search').bind 'focus.increaseOpacity', () ->
-          $('#search').animate { opacity: 1.0 }, 200
-
-        $('#search').bind 'blur.decreaseOpacity', () ->
-          $('#search').animate { opacity: 0.2 }, 100
+      :javascript
+        $(function() {
+          canvg('logo', '/assets/translate_logo.svg');
+          $('#polish').languageBox({ lang: 'pl', layout: 'compact', autocomplete: 'false', width: '513px' });
+        });

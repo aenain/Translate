@@ -99,9 +99,15 @@ $languageBoxTextareaHeight: 50px
 			&:focus
 				outline: none
 
+	textarea, input[type='text']
+		outline: none
+		margin: 0
+		padding: 3px
+		border: 0
+		font: normal 11px 'Lucida Grande'
+
 	textarea
 		resize: none
-		outline: none
 
 		width:     $languageBoxWidth - 6px
 		min-width: $languageBoxWidth - 6px
@@ -111,11 +117,7 @@ $languageBoxTextareaHeight: 50px
 		min-height: $languageBoxTextareaHeight
 		max-height: $languageBoxTextareaHeight
 
-		margin: 0
-		padding: 3px 3px 23px 3px
-		border: 0
-
-		font: normal 11px 'Lucida Grande'
+		padding-bottom: 23px
 
 		&.with-prompts
 			padding-bottom: 2px

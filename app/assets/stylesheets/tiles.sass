@@ -1,0 +1,116 @@
+@import 'reset', 'css3', 'boxes'
+
+$tileMargin: 5px
+
+$tileBackgroundColor: #f7f7f7
+
+$linkBackgroundColor: #37ce80
+$activeLinkBackgroundColor: #4e5953
+$notImportantLinkBackgroundColor: #bbbbbb
+
+body
+  font-size: 14px
+  font-family: Helvetica, Arial, sans-serif
+  letter-spacing: -0.6pt
+  line-height: 18px
+
+body > .page
+  margin: 0 auto
+  width: 600px
+  overflow: hidden
+
+.top-bar
+  margin: 20px 0
+  float: left
+
+.content, .navigation
+  float: right
+  padding: 0
+
+a
+  display: block
+  text-decoration: none
+  font-weight: bold
+  text-align: center
+
+.navigation
+  .menu
+    li
+      float: none
+      margin-top: $tileMargin
+
+      &:first-child
+        margin-top: 0
+
+      a
+        height: 50px
+        width: 50px
+        background-color: $linkBackgroundColor
+        color: #fff
+
+      &.active
+        a
+          background-color: $activeLinkBackgroundColor
+
+.content
+  height: 400px
+  width: 545px
+  margin-right: $tileMargin
+
+  .title
+    height: 50px
+    padding: 0
+    width: 100%
+    margin-bottom: $tileMargin
+
+    h1
+      padding: 13px 0 0 10px
+
+.content > div
+  background-color: $tileBackgroundColor
+  padding: 10px
+
+.clear
+  margin: 0
+  padding: 0
+  width: 0
+  height: 0
+  clear: both
+
+h1
+  font-weight: bold
+  font-size: 18px
+  line-height: 24px
+
+h2
+  font-weight: bold
+  font-size: 16px
+  line-height: 21px
+
+h3
+  font-weight: bold
+  font-size: 14px
+
+.actions
+  padding: $tileMargin 0 0 $tileMargin
+  overflow: hidden
+
+  input[type='button'], input[type='submit']
+    float: right
+    margin: 0 0 0 $tileMargin
+
+input[type='button'], input[type='submit']
+  display: block
+  height: 25px
+  width: 75px
+  border: 0
+  padding: 0
+  background-color: $linkBackgroundColor
+  color: #fff
+  font-weight: bold
+  font-size: 13px
+  text-align: center
+  cursor: pointer
+
+  &.prev
+    background-color: $notImportantLinkBackgroundColor

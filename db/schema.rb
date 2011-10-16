@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111011191226) do
+ActiveRecord::Schema.define(:version => 20111016144800) do
 
   create_table "exam_entries", :force => true do |t|
     t.integer  "exam_id"
@@ -23,6 +23,7 @@ ActiveRecord::Schema.define(:version => 20111011191226) do
     t.integer  "score",         :default => 1
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "given_answer"
   end
 
   create_table "exams", :force => true do |t|

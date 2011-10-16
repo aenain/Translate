@@ -1,26 +1,31 @@
-%h1 Question
+.title
+  %h1
+    %span#how-many-left= pluralize(@how_many_left, 'Questions')
+    Left
 
-#question.word-box
-  .lang
-    = image_tag "flag-#{@entry.question.lang}.png", class: 'flag'
+.tile-vertical.top-8.bottom-9
+  = word_box(@entry.question, id: 'question') do |question|
+    %li.clickable
+      = link_to question.name, question
 
-  %ul
-    %li= @entry.question.name
+.tile-vertical
+  = form_for @entry, url: answer_exam_path, method: :post, remote: true do |f|
+    = f.hidden_field :id
+    #answer{ lang: @entry.answer_lang }
 
-%h1 Answer
-
-= form_for @entry, url: answer_exam_path, method: :post, remote: true do |f|
-  = f.hidden_field :id
-  #answer{ lang: @entry.answer_lang }
-
-  .actions
-    = f.submit 'Continue'
+    .actions
+      %h3.description Answer
+      = f.submit 'Continue'
 
 :coffeescript
   $ () ->
     updateWordBox = ($box, question) ->
       $box.find('.lang img.flag').attr { 'src': '/assets/flag-' + question.lang + '.png', 'alt': 'Flag-' + question.lang }
       $box.find('ul li').text(question.name)
+
+    updateQuestionsCounter = (count) ->
+      pluralized = if count == 1 then 'Question' else 'Questions'
+      $('#how-many-left').text(count.toString() + ' ' + pluralized)
 
     submitForm = ($form) ->
       $.post $form.attr('action'), $form.serialize(), (response) ->
@@ -30,6 +35,7 @@
 
         updateWordBox $('#question'), response.question
         updateForm $form, $.extend({ reset: true }, response.entry)
+        updateQuestionsCounter response.how_many_left
 
     updateForm = ($form, options) ->
       if options.reset?
@@ -37,7 +43,7 @@
         $form.attr('action', action).find('#exam_entry_id').val(options.id)
         $('#answer').attr('lang', options.answer_lang).empty()
 
-      $('#answer').languageBox { autocomplete: false, textareaNameFormat: 'exam_entry[answer]' }
+      $('#answer').languageBox { autocomplete: false, inputFieldNameFormat: 'exam_entry[answer]', width: '513px', height: '93px' }
       $('#answer textarea').focus().bind 'keydown.nextQuestion', 'return', (event) ->
         event.preventDefault()
         $form.trigger 'submitForm'
@@ -48,3 +54,5 @@
       $form.trigger('submitForm')
 
     updateForm $form, {}
+
+    $form.find('textarea').focus()

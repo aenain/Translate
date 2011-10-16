@@ -16,35 +16,31 @@
 
       .navigation
         %ul.menu
-          %li.active= link_to 'W', words_path
-          %li= link_to 'T', new_exam_path
-          %li= link_to '?', '#'
+          %li{ class: menu_item_class(/words/) }= link_to 'Words', words_path
+          %li{ class: menu_item_class(/exams/) }= link_to 'Quiz', exam_path_considering_session
+          %li
+            %form#search-form{ action: search_words_path }
+              .search-box
+
+            = link_to 'Search', '#'
+
+          %li= link_to '+', new_word_path, class: 'add'
 
       .content
-        .title
-          %h1 Heading 1
-
-        %h2 Heading 2
-        %h3 Heading 3
-
-        %p
-          Regular paragraph with
-          %strong strong
-          and
-          %em em
-
-        .form
-          %form
-            #polish
-
-            .actions
-              %input.next{ type: 'button', value: 'Continue' }
-              %input.prev{ type: 'button', value: 'Back' }
-
-        /= yield
+        = yield
 
       :javascript
         $(function() {
           canvg('logo', '/assets/translate_logo.svg');
-          $('#polish').languageBox({ lang: 'pl', layout: 'compact', autocomplete: 'false', width: '513px' });
+          $.fn.languageBox.defaults.width = '513px';
+          $('#german').languageBox({ lang: 'de', autocomplete: 'false' });
+      
+          // search
+          $('#search-form .search-box').languageBox({ lang: 'pl', layout: 'compact', autocomplete: 'false', width: '281px', placeholder: 'Search...', inputFieldNameFormat: 'query' });
+          $('#search-form, #search-form + a').mouseover(function() {
+            $('#search-form:visible').clearQueue();
+            $('#search-form').not(':visible').fadeIn(200);
+          }).mouseout(function() {
+            $('#search-form:visible').delay(100).queue(function() { $(this).fadeOut(200).dequeue(); });
+          });
         });

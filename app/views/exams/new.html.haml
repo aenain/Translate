@@ -1,7 +1,11 @@
-%h1 New Test
+.title
+  %h1 New Test
 
-= form_for @exam do |f|
-  = f.select :lang, Language::FOREIGN
+.tile-vertical
+  = form_for @exam, html: { style: 'width: 100%; overflow: hidden' } do |f|
+    %div{ style: 'float: left' }
+      = f.label :lang, 'Choose Language'
+      = f.select :lang, Language::FOREIGN
 
-  .actions
-    = f.submit 'Create!', class: 'primary'
+    .actions.one-line
+      = f.submit 'Create'

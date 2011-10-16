@@ -8,14 +8,15 @@ class ExamEntry < ActiveRecord::Base
   validates :question_id, presence: true
   validates :question_type, presence: true
 
-  scope :awaiting, where(correct: nil)
+  scope :awaiting, where(given_answer: nil)
   scope :wrong, where(correct: false)
   scope :correct, where(correct: true)
 
   def try_answer(answer)
-    raise ArgumentError, "cannot answer question twice!" unless self.correct.nil?
+    raise ArgumentError, "cannot answer question twice!" unless self.given_answer.nil?
+    self.given_answer = answer
 
-    if possible_answers.by_name(answer).present?
+    if answer.present? && possible_answers.by_name(answer).present?
       self.correct = true
       exam.score += self.score
     else

@@ -2,6 +2,13 @@ Translate::Application.routes.draw do
   resources :words do
     collection do
       get 'autocomplete'
+      get 'search'
+    end
+
+    member do
+      get 'new_translation'
+      post 'create_translation'
+      delete 'remove_translation'
     end
   end
 
@@ -9,6 +16,7 @@ Translate::Application.routes.draw do
     member do
       post 'answer'
       get 'summary'
+      get 'wrong_answers_listing'
     end
   end
 

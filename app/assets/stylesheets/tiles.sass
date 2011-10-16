@@ -1,12 +1,18 @@
-@import 'reset', 'css3', 'boxes'
+@import 'reset', 'generic', 'boxes'
 
 $tileMargin: 5px
 
 $tileBackgroundColor: #f7f7f7
+$tileBorderColor: darken($tileBackgroundColor, 5%)
 
 $linkBackgroundColor: #37ce80
+$linkBorderColor: darken($linkBackgroundColor, 5%)
+
 $activeLinkBackgroundColor: #4e5953
+$activeLinkBorderColor: darken($activeLinkBackgroundColor, 5%)
+
 $notImportantLinkBackgroundColor: #bbbbbb
+$notImportantLinkBorderColor: darken($notImportantLinkBackgroundColor, 5%)
 
 body
   font-size: 14px
@@ -43,17 +49,55 @@ a
         margin-top: 0
 
       a
-        height: 50px
-        width: 50px
+        height: 48px
+        width: 48px
         background-color: $linkBackgroundColor
+        border: 1px solid $linkBorderColor
+        display: block
         color: #fff
+        -webkit-transform: rotate(90deg)
+        text-shadow: -1px 1px 0 $linkBorderColor
+
+        &.add
+          font-size: 45px
+          height: 37px
+          padding-top: 11px
 
       &.active
         a
           background-color: $activeLinkBackgroundColor
+          border-color: $activeLinkBorderColor
+          text-shadow: -1px 1px 0 $activeLinkBorderColor
+
+        #search-form
+          background-color: $activeLinkBackgroundColor
+          border-color: $activeLinkBorderColor
+
+          .search-box
+            border-color: $activeLinkBorderColor
+
+            &.focus, &:hover
+              border-color: darken($activeLinkBorderColor, 5%)
+
+      #search-form
+        display: none
+        width: 300px
+        height: 48px
+        position: absolute
+        margin-left: -300px
+        background-color: $linkBackgroundColor
+        border: 1px solid $linkBorderColor
+        border-right: 0
+        z-index: 15
+
+        .search-box
+          margin: 7px 0 0 7px
+          border-color: $linkBorderColor
+
+          &.focus, &:hover
+            border-color: darken($linkBorderColor, 5%)
 
 .content
-  height: 400px
   width: 545px
   margin-right: $tileMargin
 
@@ -62,13 +106,43 @@ a
     padding: 0
     width: 100%
     margin-bottom: $tileMargin
+    display: table
 
-    h1
-      padding: 13px 0 0 10px
+    h1, h2, h3
+      display: table-cell
+      vertical-align: middle
+      padding-left: 10px
+      padding-right: 10px
+
+      .h-additional-info
+        color: $activeLinkBackgroundColor
+        font-weight: normal
+
+      .score
+        color: $linkBackgroundColor
+        float: right
+
+    .lang
+      float: right
+      margin: 18px 10px 0 0
+      padding: 0
+
+      .flag
+        width: 18px
+        height: 11px
+        border: 1px solid #000
 
 .content > div
   background-color: $tileBackgroundColor
   padding: 10px
+
+.content .tiles-container
+  background-color: inherit
+  padding: 0
+
+  & > div
+    background-color: $tileBackgroundColor
+    padding: 10px
 
 .clear
   margin: 0
@@ -91,15 +165,38 @@ h3
   font-weight: bold
   font-size: 14px
 
-.actions
-  padding: $tileMargin 0 0 $tileMargin
+.actions, .additional-info
+  padding: 10px 0 0 0
   overflow: hidden
+
+  &.main
+    padding-top: 0
+    padding-bottom: 6px
+
+    h1, h2, h3
+      padding-top: 0
+
+  &.low
+    padding-top: 6px
+
+  &.one-line
+    padding: 3px 0 0 0
+    clear: right
+    float: right
 
   input[type='button'], input[type='submit']
     float: right
     margin: 0 0 0 $tileMargin
 
-input[type='button'], input[type='submit']
+  .description
+    float: left
+    padding-top: 3px
+    color: $activeLinkBackgroundColor
+
+    &.right
+      float: right
+
+input[type='button'], input[type='submit'], .pagination a, .actions a
   display: block
   height: 25px
   width: 75px
@@ -111,6 +208,76 @@ input[type='button'], input[type='submit']
   font-size: 13px
   text-align: center
   cursor: pointer
+  border: 1px solid $linkBorderColor
+  text-shadow: 0 -1px 0 $linkBorderColor
 
-  &.prev
+  &.prev, &.previous_page
     background-color: $notImportantLinkBackgroundColor
+    border-color: $notImportantLinkBorderColor
+    text-shadow: 0 -1px 0 $notImportantLinkBorderColor
+
+.content
+  .language-box, .word-box
+    border: 1px solid #eee
+
+    &.focus, &:hover
+      border-color: #ddd
+      box-shadow: inset 0 0 0 0 #fff
+
+  .word-box
+    width: 513px
+    height: 21px
+
+    ul
+      max-width: 473px
+
+    &.scalable
+      height: auto
+
+      &.min-height-73
+        min-height: 73px
+
+  .left-0
+    padding-left: 0 !important
+
+  .top-8
+    padding-top: 8px !important
+
+  .bottom-9
+    padding-bottom: 9px !important
+
+  .tile-vertical
+    margin-top: $tileMargin
+    margin-bottom: $tileMargin
+    min-height: 30px
+
+    &.first
+      margin-top: 0
+
+    .mini-tile
+      padding: 10px 0
+      clear: both
+      display: block
+
+  .tile-horizontal
+    margin-left: $tileMargin
+    margin-right: $tileMargin
+
+  .tiles-container .pagination, .pagination
+    background-color: #fff
+    padding: 0
+    text-align: right
+
+    span, a
+      display: inline-block
+
+    .disabled
+      display: none
+
+  .pagination, .actions
+    text-align: right
+
+    a
+      display: inline-block
+      height: 21px
+      padding-top: 4px

@@ -1,16 +1,9 @@
-- if @words.values.compact.present?
-  - Language::AVAILABLE.each do |lang|
-    - if @words[lang].present?
-      .word-box
-        .lang
-          = image_tag "flag-#{lang}.png", class: 'flag'
+.title
+  %h1 Recently Added Words
 
-        %ul
-          - @words[lang].each do |word|
-            %li.clickable{ title: word.name }
-              = link_to word.highlight, word, class: 'block'
-
-- else
-  .results Nothing found
-
-= link_to 'New Translation', new_word_path
+- Language::AVAILABLE.each do |lang|
+  - if @words[lang].present?
+    .tile-vertical
+      = word_box(@words[lang].first(15), class: 'scalable min-height-73') do |word|
+        %li.clickable{ title: word.name }
+          = link_to word.highlight, word, class: 'block'

@@ -1,28 +1,14 @@
-%h1 Test Summary
+.title
+  %h1
+    Test Summary
+    .h-additional-info.score #{@exam.score} / #{@exam.max_score}
 
-%h2 Score
-.score #{@exam.score} / #{@exam.max_score}
+- if @wrong_entries.blank?
+  .title.tile-vertical
+    %h2
+      Congratulations!
+      .h-additional-info
+        You have made no mistakes.
 
-- if @wrong_entries.present?
-  %h2 Wrong answers
-
-  - @wrong_entries.each do |entry|
-    %h3 Question
-
-    .word-box{ lang: entry.question.lang }
-      .lang
-        = image_tag "flag-#{entry.question.lang}.png", class: 'flag'
-
-      %ul
-        %li.clickable
-          = link_to entry.question.highlight, entry.question, title: entry.question.name, class: 'block'
-
-    %h3 Possible Answers
-    .word-box{ lang: entry.answer_lang }
-      .lang
-        = image_tag "flag-#{entry.answer_lang}.png", class: 'flag'
-
-      %ul
-        - entry.possible_answers.each do |answer|
-          %li.clickable
-            = link_to answer.highlight, answer, title: answer.name, class: 'block'
+- else
+  = render :partial => 'wrong_answers'

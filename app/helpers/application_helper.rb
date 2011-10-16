@@ -8,4 +8,12 @@ module ApplicationHelper
       new_exam_path
     end
   end
+
+  def menu_item_class(pattern)
+    if controller_name =~ pattern
+      'active'
+    else
+      ''
+    end
+  end
 end

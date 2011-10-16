@@ -1,9 +1,11 @@
 class WordsController < ApplicationController
   def index
-    @search = params[:search]
+    @words = Word.where(lang: Language::AVAILABLE).order('created_at DESC').group_by(&:lang)
+  end
 
-    @scope = @search.present? ? Search.new(@search).words : Word
-    @words = @scope.all(conditions: { lang: Language::AVAILABLE }, order: 'name ASC').group_by(&:lang)
+  def search
+    @query = params[:query]
+    @words = Search.new(@query).words.where(lang: Language::AVAILABLE).order('created_at DESC').group_by(&:lang)
   end
 
   def show
@@ -50,6 +52,28 @@ class WordsController < ApplicationController
     @word.destroy
 
     redirect_to words_url
+  end
+
+  def new_translation
+    @word = Word.find(params[:id])
+    @lang = params[:lang] || (Language::AVAILABLE - @word.lang).first
+  end
+
+  def create_translation
+    @word = Word.find(params[:id])
+    lang, name = params[:translation][:lang], params[:translation][:name]
+
+    @word.translations.find_or_create_by_lang_and_name!(lang, name)
+    redirect_to @word
+  end
+
+  def remove_translation
+    @word = Word.find(params[:id])
+    @translation = Word.find(params[:translation_id])
+
+    @word.translatings.where(translated_id: @translation.id, translated_type: @translation.class.name).first.destroy
+
+    render :nothing => true
   end
 
   def autocomplete

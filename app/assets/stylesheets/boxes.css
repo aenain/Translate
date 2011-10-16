@@ -16,7 +16,7 @@
       float: left; }
   .language-box .lang, .word-box .lang {
     float: right;
-    padding: 3px 5px; }
+    padding: 3px 5px 0px 5px; }
     .language-box .lang .flag, .word-box .lang .flag {
       width: 18px;
       height: 11px;
@@ -66,7 +66,7 @@
     float: left; }
     .language-box form input[type='text'], .word-box form input[type='text'] {
       border: 0;
-      width: 450px;
+      width: 430px;
       padding: 0 0 0 5px;
       font: bold 11px "Lucida Grande";
       line-height: 13px !important;

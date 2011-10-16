@@ -98,7 +98,10 @@ closure = ($) ->
 		  else
 		    @inputField = $("<input />").attr('type', 'text')
 
-		  @inputField.val(@options.word).css(cssParams).appendTo(@box)
+		  @inputField.val(@options.text).attr('name', name).css(cssParams)
+		  @inputField.attr('placeholder', @options.placeholder) if @options.placeholder?
+		  @inputField.appendTo(@box)
+
 		  return this
 
 		inputFieldCssParams: ->
@@ -224,9 +227,10 @@ closure = ($) ->
 			small: 'alt+NUMBER'
 			capital: 'alt+shift+NUMBER'
 
-		word: ''
+		text: ''
 		lang: 'en'
 		inputFieldNameFormat: 'translations[LANG]'
+		placeholder: null
 
 		# these parameters take precedence (if have values...) before those specified for certain layouts
 		width: null

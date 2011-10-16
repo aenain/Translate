@@ -1,35 +1,37 @@
-%h1 New Translation
+.title
+  %h1 New Translation
 
-/ we have to force route because (against convention) @word can be an existing word...
-= form_for @word, url: words_path, method: :post do |f|
-  = f.hidden_field :lang
-  = hidden_field_tag :step, 1
+.tile-vertical
+  / we have to force route because (against convention) @word can be an existing word...
+  = form_for @word, url: words_path, method: :post do |f|
+    = f.hidden_field :lang
+    = hidden_field_tag :step, 1
 
-  .language-input.primary-language{ lang: Language::PRIMARY }
+    .language-input.primary-language{ lang: Language::PRIMARY }
 
-  - (Language::FOREIGN).each do |lang|
-    .language-input.hidden{ lang: lang }
+    - (Language::FOREIGN).each do |lang|
+      .language-input.hidden{ lang: lang }
 
-  .actions
-    %input.prev.secondary.hidden{ type: 'button', value: 'Back' }
-    %input.next.primary{ type: 'button', value: 'Continue' }
+    .actions
+      = f.submit 'Create', class: 'next hidden'
 
-    = f.submit 'Create', class: 'hidden primary'
+      %input.next{ type: 'button', value: 'Continue' }
+      %input.prev.hidden{ type: 'button', value: 'Back' }
 
 :javascript
   $(function() {
-    $('.content .primary-language').languageBox({ sourceUrl: '#{autocomplete_words_path}', textareaNameFormat: 'word[name]', word: '#{@word.name}' });
+    $('.content .primary-language').languageBox({ sourceUrl: '#{autocomplete_words_path}', inputFieldNameFormat: 'word[name]', word: '#{@word.name}', width: '513px', height: '93px' });
     $('.content .primary-language textarea').focus()
   });
 
 :coffeescript
   $ () ->
-    $(".content .language-input:not('.primary-language')").languageBox { sourceUrl: '#{autocomplete_words_path}' }
+    $(".content .language-input:not('.primary-language')").languageBox { sourceUrl: '#{autocomplete_words_path}', width: '513px', height: '93px' }
 
     # pressing enter on focused textareas indicates continuing the flow
     $('.content .language-input textarea').bind 'keydown.nextStep', 'return', (event) ->
       event.preventDefault()
-      $(this).parents('.language-input').siblings('.actions').children('.primary:visible').trigger 'click'
+      $(this).parents('.language-input').siblings('.actions').children('.next:visible').trigger 'click'
 
     steps =
       range:

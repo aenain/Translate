@@ -1,0 +1,18 @@
+.tile-vertical.top-8
+  .additional-info.main
+    %h3.description #{entry.position.ordinalize} Question
+
+  = word_box(entry.question) do |question|
+    %li.clickable
+      = link_to question.name, question
+
+.tile-vertical
+  = word_box(entry.possible_answers, class: 'scalable') do |answer|
+    %li.clickable
+      = link_to answer.name, answer
+
+  .additional-info.low
+    %h3.description Possible Answers
+    %h3.description.right
+      Given Answer:
+      %span "#{entry.given_answer}"

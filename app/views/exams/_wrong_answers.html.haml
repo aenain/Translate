@@ -1,0 +1,14 @@
+#wrong-answers.tiles-container
+  = render :partial => 'wrong_entry', :collection => @wrong_entries, :as => 'entry'
+
+  .tile-vertical.pagination
+    - if @page > 1
+      = link_to 'Previous', wrong_answers_listing_exam_path(@exam, page: @page - 1), remote: true, class: 'prev'
+    - if @page < @wrong_entries.total_pages
+      = link_to 'Next', wrong_answers_listing_exam_path(@exam, page: @page + 1), remote: true, class: 'next'
+  
+  :coffeescript
+    $ () ->
+      $('.pagination a').click () ->
+        $.get $(this).attr('href'), (response) ->
+          $('#wrong-answers').replaceWith $(response)

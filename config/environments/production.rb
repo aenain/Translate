@@ -15,7 +15,7 @@ Translate::Application.configure do
   config.assets.compress = true
 
   # Do fallback to assets pipeline if a precompiled asset is missed
-  config.assets.compile = true # false
+  config.assets.compile = false # true # false
 
   # Generate digests for assets URLs
   config.assets.digest = true

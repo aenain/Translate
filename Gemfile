@@ -26,8 +26,7 @@ gem 'will_paginate', :git => 'https://github.com/p7r/will_paginate.git', :branch
 
 # Gems used only for assets and not required
 # in production environments by default.
-# Heroku requires those gems
-group :assets, :production do
+group :assets do
   gem 'sass-rails', "~> 3.1.0"
   gem 'coffee-rails', "~> 3.1.0"
   gem 'uglifier'
@@ -59,4 +58,5 @@ end
 # for Heroku
 group :production do
   gem 'pg'
+  gem 'therubyracer'
 end

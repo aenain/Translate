@@ -33,3 +33,5 @@ jquery-ui.min.js: jquery-ui-7e33882a28fc84ad0e0e47e46cbf901c.min.js
 jquery.min.js: jquery-8a50feed8d29566738ad005e19fe1c2d.min.js
 application.js: application-d407179971a7cb7fe50b13e948253bcb.js
 application.css: application-07dbbb4b7d9be3a50138cb252d840375.css
+canvg.js: canvg-77b364d79f632010090535b183155ca6.js
+rgbcolor.js: rgbcolor-2dfdf2550035b97e1376330ebd560fcf.js

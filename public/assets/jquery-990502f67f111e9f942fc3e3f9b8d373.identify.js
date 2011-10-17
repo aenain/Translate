@@ -1,0 +1,1 @@
+jQuery.fn.identify=function(a){var b=0;return this.each(function(){if($(this).attr("id"))return;do{b++;var c=a+"_"+b}while(document.getElementById(c)!=null);$(this).attr("id",c)})}

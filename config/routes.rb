@@ -3,6 +3,7 @@ Translate::Application.routes.draw do
     collection do
       get 'autocomplete'
       get 'search'
+      get 'test'
     end
 
     member do

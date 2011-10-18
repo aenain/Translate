@@ -9,6 +9,7 @@
   
   :coffeescript
     $ () ->
-      $('.pagination a').click () ->
+      $('.pagination a').click (event) ->
+        event.preventDefault()
         $.get $(this).attr('href'), (response) ->
           $('#wrong-answers').replaceWith $(response)

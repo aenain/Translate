@@ -42,13 +42,19 @@
 
     $("#edit textarea").bind 'keydown.doneEditing', 'return', (event) ->
       event.preventDefault()
-      $("#edit form .actions input").trigger 'click'
+      $("#edit form").trigger 'remoteSubmit'
 
     $("#edit textarea").bind 'keydown.discardChanges', 'esc', () ->
       $("#show, #edit").toggleClass('hidden')
       $("#edit textarea").val $("#show .word-box .clickable a").text()
 
-    $("#edit form").bind 'submit.renderShow', () ->
+    $("#edit form input[type='submit']").click (event) ->
+      event.preventDefault()
+      $(this).parents('form').trigger 'remoteSubmit'
+
+    $("#edit form").bind 'remoteSubmit', () ->
+      $.post $(this).attr('action'), $(this).serialize(), (response) ->
+
       word = $("#edit").find('textarea').val()
       $("#show .word-box .clickable a").text word
 

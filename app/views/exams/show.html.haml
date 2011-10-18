@@ -21,7 +21,9 @@
   $ () ->
     updateWordBox = ($box, question) ->
       $box.find('.lang img.flag').attr { 'src': '/assets/flag-' + question.lang + '.png', 'alt': 'Flag-' + question.lang }
-      $box.find('ul li').text(question.name)
+      $a = $box.find 'ul li a'
+      $a.text question.name
+      $a.attr 'href', $a.attr('href').replace(/\d+/, question.id)
 
     updateQuestionsCounter = (count) ->
       pluralized = if count == 1 then 'Question' else 'Questions'

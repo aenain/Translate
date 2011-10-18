@@ -64,6 +64,6 @@ class Word < ActiveRecord::Base
   end
 
   def for_js
-    { name: name.force_encoding('utf-8'), lang: lang }
+    { id: id, name: name.force_encoding('utf-8'), lang: lang }
   end
 end

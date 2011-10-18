@@ -110,7 +110,7 @@ closure = ($) ->
 
 		  switch @options.layout
 		    when 'extended'
-		      height = boxHeight - 58 # TODO! don't hardcode this values...
+		      height = boxHeight - 55 # TODO! don't hardcode this values...
 		      width = boxWidth - 6
 		    when 'compact'
 		      height = boxHeight - 6

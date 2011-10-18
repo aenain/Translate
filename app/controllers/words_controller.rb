@@ -84,7 +84,7 @@ class WordsController < ApplicationController
 
   def autocomplete
     @query = "#{params[:term]} /#{params[:lang]}"
-    @words = Search.new(@query).words.all(order: 'name ASC', limit: 10).map { |w| w.name.force_encoding('utf-8') }
+    @words = Search.new(@query).words.all(order: 'name ASC', limit: 3).map { |w| w.name.force_encoding('utf-8') }
 
     render :json => @words
   end

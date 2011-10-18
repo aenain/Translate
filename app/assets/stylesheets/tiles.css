@@ -145,6 +145,8 @@ input, select {
       border: 1px solid black; }
   .language-box ul, .word-box ul {
     overflow: hidden; }
+    .language-box ul.ui-menu, .word-box ul.ui-menu {
+      max-height: 21px; }
     .language-box ul li, .word-box ul li {
       display: block;
       float: left;

@@ -5,7 +5,13 @@ class WordsController < ApplicationController
 
   def search
     @query = params[:query]
-    @words = Search.new(@query).words.where(lang: Language::AVAILABLE).order('created_at DESC').group_by(&:lang)
+    @results = Search.new(@query).words.where(lang: Language::AVAILABLE)
+
+    if @results.length == 1
+      redirect_to @results.first
+    else
+      @words = @results.order('name ASC').group_by(&:lang)
+    end
   end
 
   def show

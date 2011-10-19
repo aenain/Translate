@@ -5,5 +5,5 @@
   - if @words[lang].present?
     .tile-vertical
       = word_box(@words[lang].first(15), class: 'scalable min-height-73') do |word|
-        %li.clickable{ title: word.name }
-          = link_to word.highlight, word, class: 'block'
+        %li.clickable
+          = link_to word.name, word, class: 'block'

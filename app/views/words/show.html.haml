@@ -4,7 +4,7 @@
 #show.tile-vertical.top-8.bottom-9
   = word_box(@word) do |word|
     %li.clickable
-      = link_to word.name(highlight: true), word
+      = link_to word.name, word
 
 #edit.hidden.tile-vertical.top-8
   = form_for @word, :remote => true do |f|
@@ -19,9 +19,9 @@
 - @translations.each do |(lang, translations)|
   .tile-vertical
     = word_box(translations, class: 'scalable') do |translation|
-      %li.word.clickable.removeable{ title: translation.name }
+      %li.word.clickable.removeable
         = link_to '', remove_translation_word_path(@word, translation_id: translation), :method => :delete, :remote => true, :class => 'remove'
-        = link_to translation.highlight, translation, :class => 'block'
+        = link_to translation.name, translation, :class => 'block'
 
     .actions
       = link_to 'Add', new_translation_word_path(@word, lang: lang), class: 'next'

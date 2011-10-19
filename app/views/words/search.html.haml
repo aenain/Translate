@@ -9,8 +9,8 @@
       - tile_class = @words[lang].count <= 2 ? %w{top-8 bottom-9} : ''
       .tile-vertical{ class: tile_class }
         = word_box(@words[lang].first(15), class: 'scalable') do |word|
-          %li.clickable{ title: word.name.force_encoding('utf-8') }
-            = link_to word.highlight.force_encoding('utf-8'), word, class: 'block'
+          %li.clickable
+            = link_to word.name, word, class: 'block'
 
 - else
   .results.tile-vertical Nothing found

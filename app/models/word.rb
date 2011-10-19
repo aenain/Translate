@@ -39,31 +39,67 @@ class Word < ActiveRecord::Base
   # Word.by_name('geh') # => ['gehen', geh']
   # Word.by_name('geh', strict: true) # => ['geh']
   scope :by_name, lambda { |name, options = {}| options[:strict] ? where('name = ?', name) : where('name like ?', "%#{name}%") }
-  scope :by_highlight, lambda { |highlight, options = {}| options[:strict] ? where('highlight = ?', highlight) : where('highlight like ?', "%#{highlight}%") }
+
+  # scope :by_name, lambda { |name, options = {}|
+  #   if options[:strict]
+  #     where(name: name).order('name ASC')
+  #   else
+  #     usage = options.delete(:usage)
+  #     usage = "search" unless %w{quiz search autocomplete}.include?(usage)
+  # 
+  #     Word.send(:"by_name_for_#{usage}", name, options)
+  #   end
+  # }
+  # 
+  # scope :by_name_for_quiz, lambda { |name, options = {}|
+  #   like_condition = 'words.name like :like_name and char_length(words.name) <= 1.18 * :length'
+  #   scope_options = { like_name: "%#{name}%", length: name.length }
+  # 
+  #   scope = where(like_condition, scope_options).order('name ASC')
+  # 
+  #   if scope.count.zero?
+  #     levenstein_condition = "ratio_as_words_array(words.name, :exact_name) >= 0.85 and char_length(words.name) <= 1.18 * :length"
+  #     scope = where("(#{like_condition}) or (#{levenstein_condition})", scope_options.merge(exact_name: name)).order('name ASC')
+  #   end
+  # 
+  #   scope
+  # }
+  # 
+  # scope :by_name_for_search, lambda { |name, options = {}|
+  #   like_condition = 'name like :like_name'
+  #   scope_options = { like_name: "%#{name}%" }
+  # 
+  #   scope = where(like_condition, scope_options).order('name ASC')
+  # 
+  #   if name.length >= 2 and scope.count.zero?
+  #     levenstein_condition = "ratio_as_words_array(words.name, :exact_name) >= 0.7"
+  #     scope = where("(#{like_condition}) or (#{levenstein_condition})", scope_options.merge(exact_name: name)).order('name ASC')
+  #   end
+  # 
+  #   scope
+  # }
+  # 
+  # scope :by_name_for_autocomplete, lambda { |name, options = {}|
+  #   like_condition = 'name like :like_name'
+  #   scope_options = { like_name: "%#{name}%" }
+  # 
+  #   scope = where(like_condition, scope_options).order('name ASC')
+  # 
+  #   if scope.count < options[:limit].to_i
+  #     levenstein_condition = "ratio_as_words_array(name, :exact_name) >= 0.7"
+  #     scope = where("(#{like_condition}) or (#{levenstein_condition})", scope_options.merge(exact_name: name)).order('name ASC').limit(options[:limit])
+  #   end
+  # 
+  #   scope
+  # }
+
   scope :by_lang, lambda { |lang| where(lang: lang) }
 
   def self.find_or_build(params = {})
     first(conditions: params) || new(params)
   end
 
-  def name=(name)
-    if matcher = name.match(/\[(?<highlight>(.*))\]/)
-      self.highlight = matcher[:highlight]
-    else
-      self.highlight = name
-    end
-
-    write_attribute :name, name.gsub(/\[|\]/, '')
-  end
-
-  def name(options = {})
-    name = read_attribute :name
-    name.gsub!(/(#{Regexp.escape(highlight)})/, '[\1]') if options[:highlight] && highlight.present? && name != highlight
-
-    name
-  end
-
   def for_js
-    { id: id, name: name.force_encoding('utf-8'), lang: lang }
+    { id: id, name: name, lang: lang }
   end
 end

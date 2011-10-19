@@ -82,7 +82,6 @@ ActiveRecord::Schema.define(:version => 20111020164241) do
     t.string   "lang"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "highlight",  :default => ""
   end
 
 end

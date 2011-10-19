@@ -1,7 +1,7 @@
 .title
   %h1
     New Translation
-    %span.h-additional-info for "#{@word.highlight}"
+    %span.h-additional-info for "#{@word.name}"
 
 .tile-vertical
   = form_for @word, url: create_translation_word_path(@word), method: :post do |f|

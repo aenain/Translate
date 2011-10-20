@@ -35,6 +35,9 @@ end
 gem 'jquery-rails'
 gem 'taps'
 
+# Gravatar
+gem 'gravatar_image_tag'
+
 # Use unicorn as the web server
 # gem 'unicorn'
 

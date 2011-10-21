@@ -38,6 +38,9 @@ gem 'taps'
 # Gravatar
 gem 'gravatar_image_tag'
 
+# Admin Panel
+gem 'activeadmin'
+
 # Use unicorn as the web server
 # gem 'unicorn'
 

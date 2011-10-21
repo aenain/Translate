@@ -229,8 +229,9 @@ body {
   line-height: 18px; }
 
 #logo {
-  width: 190px;
-  height: 38px; }
+  width: 178px;
+  height: 34px;
+  background: white url("/images/logo-alpha.png") 0 0 no-repeat; }
 
 body > .page {
   margin: 0 auto;

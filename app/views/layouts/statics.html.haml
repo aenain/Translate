@@ -1,0 +1,28 @@
+!!! 5
+%html
+  %head
+    %title Translate
+    = favicon_link_tag '/images/favicon.png', type: 'image/png'
+
+    = stylesheet_link_tag "tiles"
+    = javascript_include_tag "jquery-1.6.4.min", "jquery.ui-1.8.16.custom", "jquery.caret.1.02", "jquery.fcbkcomplete.min", "jquery.hotkeys", "jquery.identify", "jquery.language-box"
+    = csrf_meta_tags
+ 
+  %body
+    .page
+      .top-bar{ style: 'width: 100%' }
+        %a{ href: '/', style: 'float: left' }
+          #logo
+
+          = link_to "What is this all about?", how_static_path, class: 'handwritten', style: 'float: right; margin-top: 16px'
+
+      .clear
+
+      .navigation
+        %ul.menu
+          - %w{how why who}.each do |action|
+            %li{ class: menu_item_class(Regexp.new(action), match: 'action') }
+              = link_to action.capitalize, self.send("#{action}_static_path")
+
+      .content
+        = yield

@@ -26,6 +26,13 @@ body
 
   background: #fff url('/images/logo-alpha.png') 0 0 no-repeat
 
+.handwritten
+  color: #37ce80
+  font-family: 'Nanum Pen Script'
+  font-size: 21px
+  font-weight: 100
+  padding: 0 3px
+
 body > .page
   margin: 0 auto
   width: 600px
@@ -34,6 +41,10 @@ body > .page
 .top-bar
   margin: 20px 0
   float: left
+  width: 100%
+
+  a:first-child
+    float: left
 
 .content, .navigation
   float: right
@@ -252,6 +263,9 @@ input[type='button'], input[type='submit'], .pagination a, .actions a
   .bottom-9
     padding-bottom: 9px !important
 
+  .two-tiles-height
+    height: 85px
+
   .tile-vertical
     margin-top: $tileMargin
     margin-bottom: $tileMargin
@@ -267,7 +281,14 @@ input[type='button'], input[type='submit'], .pagination a, .actions a
 
   .tile-horizontal
     margin-left: $tileMargin
-    margin-right: $tileMargin
+    margin-right: 0
+    float: left
+
+    &:first-child
+      margin-left: 0
+
+  .tiles-container
+    overflow: hidden
 
   .tiles-container .pagination, .pagination
     background-color: #fff
@@ -287,3 +308,62 @@ input[type='button'], input[type='submit'], .pagination a, .actions a
       display: inline-block
       height: 21px
       padding-top: 4px
+
+.author-avatar
+  height: 85px
+  width: 85px
+  overflow: hidden
+
+  .avatar
+    border: 1px solid #000
+    height: 83px
+    width: 83px
+
+.author-info
+  height: 85px
+  width: 415px
+
+  .name
+    float: left
+    margin-bottom: 2px
+
+  .additional-links
+    float: right
+    margin-top: -2px
+
+    ul
+      li
+        display: inline-block
+        margin-left: 5px
+
+        &:first-child
+          margin-left: 0
+
+        a
+          font-size: 12px
+
+  .about-author
+    font-size: 12px
+    line-height: 16px
+    text-align: justify
+
+  a
+    display: inline
+    color: $linkBackgroundColor
+
+    &:hover
+      text-decoration: underline
+
+.point
+  font-size: 12px
+  line-height: 16px
+  text-align: justify
+  margin-top: 3px
+
+  .hint
+    display: inline
+    padding: 1px 2px
+    background-color: $notImportantLinkBackgroundColor
+    color: #fff
+    border-color: $notImportantLinkBorderColor
+    border-radius: 3px

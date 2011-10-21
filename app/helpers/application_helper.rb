@@ -9,8 +9,8 @@ module ApplicationHelper
     end
   end
 
-  def menu_item_class(pattern)
-    if controller_name =~ pattern
+  def menu_item_class(pattern, options = {})
+    if self.send("#{options[:match] || 'controller'}_name") =~ pattern
       'active'
     else
       ''

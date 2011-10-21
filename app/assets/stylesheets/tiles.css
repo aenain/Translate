@@ -233,6 +233,13 @@ body {
   height: 34px;
   background: white url("/images/logo-alpha.png") 0 0 no-repeat; }
 
+.handwritten {
+  color: #37ce80;
+  font-family: "Nanum Pen Script";
+  font-size: 21px;
+  font-weight: 100;
+  padding: 0 3px; }
+
 body > .page {
   margin: 0 auto;
   width: 600px;
@@ -240,7 +247,10 @@ body > .page {
 
 .top-bar {
   margin: 20px 0;
-  float: left; }
+  float: left;
+  width: 100%; }
+  .top-bar a:first-child {
+    float: left; }
 
 .content, .navigation {
   float: right;
@@ -421,6 +431,8 @@ input[type='button'], input[type='submit'], .pagination a, .actions a {
   padding-top: 8px !important; }
 .content .bottom-9 {
   padding-bottom: 9px !important; }
+.content .two-tiles-height {
+  height: 85px; }
 .content .tile-vertical {
   margin-top: 5px;
   margin-bottom: 5px;
@@ -433,7 +445,12 @@ input[type='button'], input[type='submit'], .pagination a, .actions a {
     display: block; }
 .content .tile-horizontal {
   margin-left: 5px;
-  margin-right: 5px; }
+  margin-right: 0;
+  float: left; }
+  .content .tile-horizontal:first-child {
+    margin-left: 0; }
+.content .tiles-container {
+  overflow: hidden; }
 .content .tiles-container .pagination, .content .pagination {
   background-color: white;
   padding: 0;
@@ -448,3 +465,51 @@ input[type='button'], input[type='submit'], .pagination a, .actions a {
     display: inline-block;
     height: 21px;
     padding-top: 4px; }
+
+.author-avatar {
+  height: 85px;
+  width: 85px;
+  overflow: hidden; }
+  .author-avatar .avatar {
+    border: 1px solid black;
+    height: 83px;
+    width: 83px; }
+
+.author-info {
+  height: 85px;
+  width: 415px; }
+  .author-info .name {
+    float: left;
+    margin-bottom: 2px; }
+  .author-info .additional-links {
+    float: right;
+    margin-top: -2px; }
+    .author-info .additional-links ul li {
+      display: inline-block;
+      margin-left: 5px; }
+      .author-info .additional-links ul li:first-child {
+        margin-left: 0; }
+      .author-info .additional-links ul li a {
+        font-size: 12px; }
+  .author-info .about-author {
+    font-size: 12px;
+    line-height: 16px;
+    text-align: justify; }
+  .author-info a {
+    display: inline;
+    color: #37ce80; }
+    .author-info a:hover {
+      text-decoration: underline; }
+
+.point {
+  font-size: 12px;
+  line-height: 16px;
+  text-align: justify;
+  margin-top: 3px; }
+  .point .hint {
+    display: inline;
+    padding: 1px 2px;
+    background-color: #bbbbbb;
+    color: white;
+    border-color: #aeaeae;
+    border-radius: 3px; }

@@ -1,0 +1,5 @@
+class StaticsController < ApplicationController
+  def why; end
+  def how; end
+  def who; end
+end

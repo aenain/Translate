@@ -1,0 +1,25 @@
+.title
+  %h1
+    Who?
+    %span.h-additional-info - Who stays behind?
+
+.tiles-container
+  .author-avatar.tile-horizontal
+    = image_tag '/images/artur-avatar.jpeg', class: 'avatar'
+
+  .author-info.tile-horizontal
+    %h2.name Artur Hebda
+
+    .additional-links
+      %ul
+        %li= link_to 'Portfolio', 'http://www.aenain.vooa.pl'
+        %li= link_to 'GitHub', 'http://www.github.com/aenain'
+
+    .clear
+
+    .about-author
+      Hi! I am a Ruby on Rails Developer who created Translate from scratch. Every day I work for
+      = link_to 'AdTaily', 'http://www.adtaily.pl'
+      and alongside study Applied Computer Science on
+      = link_to 'University of Science and Technology', 'http://www.agh.edu.pl'
+      in Cracow.

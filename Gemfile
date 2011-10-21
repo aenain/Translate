@@ -27,7 +27,6 @@ gem 'will_paginate', :git => 'https://github.com/p7r/will_paginate.git', :branch
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
-  gem 'sass-rails', "~> 3.1.0"
   gem 'coffee-rails', "~> 3.1.0"
   gem 'uglifier'
 end
@@ -37,6 +36,9 @@ gem 'taps'
 
 # Gravatar
 gem 'gravatar_image_tag'
+
+# Sass was in assets group, but it is required by activeadmin.
+gem 'sass-rails', "~> 3.1.0"
 
 # Admin Panel
 gem 'activeadmin'

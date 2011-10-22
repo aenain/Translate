@@ -43,6 +43,9 @@ gem 'sass-rails', "~> 3.1.0"
 # Admin Panel
 gem 'activeadmin'
 
+# Levenshtein
+gem 'text'
+
 # Use unicorn as the web server
 # gem 'unicorn'
 

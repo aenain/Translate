@@ -1,4 +1,6 @@
 class ExamEntry < ActiveRecord::Base
+  MIN_ACCEPTABLE_MATCH_RATIO = 0.85
+
   belongs_to :exam
   belongs_to :question, polymorphic: true
 
@@ -16,7 +18,7 @@ class ExamEntry < ActiveRecord::Base
     raise ArgumentError, "cannot answer question twice!" unless self.given_answer.nil?
     self.given_answer = answer
 
-    if answer.present? && possible_answers.by_name(answer).present?
+    if answer.present? && match_answer?(answer)
       self.correct = true
       exam.score += self.score
     else
@@ -31,5 +33,20 @@ class ExamEntry < ActiveRecord::Base
 
   def possible_answers
     question.translations.by_lang(answer_lang)
+  end
+
+  def match_answer?(answer)
+    prepare = lambda do |text| text.scan(/[[:alpha:]\-']+/).sort.join(' ') end
+    given = prepare.call(answer)
+
+    possible_answers.each do |possible_answer|
+      possible = prepare.call(possible_answer.name)
+      distance = Text::Levenshtein.distance(given, possible)
+
+      ratio = 1 - distance.to_f / [given.length, possible.length].max
+      return true if ratio >= MIN_ACCEPTABLE_MATCH_RATIO
+    end
+
+    false
   end
 end

@@ -22,6 +22,7 @@ closure = ($) ->
 		constructor: (@box, @options) ->
 			@lang = @box.attr('lang') || @options.lang
 			@useAutocomplete = (typeof @options.autocomplete == 'object' and @options.autocomplete)
+			@allowLanguageChanges = (typeof @options.languages == 'object' && @options.languages)
 
 		buildLayout: ->
 			this.addBoxAttributes()
@@ -74,20 +75,36 @@ closure = ($) ->
 			self = this
 
 			$.each this.mergeAllLettersIntoOneList(), (index, letter) ->
-				$letter = $("<li></li>").addClass('clickable').text(letter).appendTo(self.specialLetterList)
+				self.buildSpecialLetterListItemByLetter(letter)
 
 			return this
 
 		mergeAllLettersIntoOneList: ->
-			@letters = $.merge [], @options.specialLetter.list[@lang]?.small || []
-			capitalLetters = $.merge [], @options.specialLetter.list[@lang]?.capital || []
+			this.mergeAllLettersIntoOneListByLang(@lang)
+
+		mergeAllLettersIntoOneListByLang: (lang) ->
+			@letters = $.merge [], @options.specialLetter.list[lang]?.small || []
+			capitalLetters = $.merge [], @options.specialLetter.list[lang]?.capital || []
 
 			return $.merge(@letters, capitalLetters)
 
+		buildSpecialLetterListItemByLetter: (letter) ->
+			$letter = $("<li></li>").addClass('clickable').text(letter).appendTo(@specialLetterList)
+
 		prepareLanguageMarker: ->
 			@languageMarker = $("<div></div>").addClass('lang')
-			@flag = $("<img />").addClass('flag').attr({ src: "#{@options.imagesDirectory}/flag-#{@lang}.png", alt: "flag-#{@lang}" }).appendTo(@languageMarker)
+			@flag = $("<img />").addClass('flag').attr this.languageMarkerFlagAttributesByLang(@lang)
+
+			if @allowLanguageChanges
+				@languageSwitcher = $("<a></a>").addClass('lang-link').attr({ href: '#translateLanguageSwitch', title: 'Change Language' }).appendTo(@languageMarker)
+				@flag.appendTo @languageSwitcher
+			else
+				@flag.appendTo @languageMarker
+
 			return @languageMarker
+
+		languageMarkerFlagAttributesByLang: (lang) ->
+			{ src: "#{@options.imagesDirectory}/flag-#{lang}.png", alt: "flag-#{lang}" }
 
 		buildInputField: ->
 		  name = @options.inputFieldNameFormat.replace('LANG', @lang)
@@ -130,20 +147,28 @@ closure = ($) ->
 		  return params
 
 		setUpData: ->
+			data = { lang: @lang }
+
 			if @useAutocomplete
-				# $.data requires a specific DOM object as the first argument (not $-wrapped)
-				$.data @inputField[0], 'languageBox', { sourceUrl: @options.sourceUrl, lang: @lang, termMapper: @options.termMapper }
+				$.extend data, { sourceUrl: @options.sourceUrl, termMapper: @options.termMapper }
+			if @allowLanguageChanges
+				$.extend data, { languages: @options.languages }
+
+			# $.data requires a specific DOM object as the first argument (not $-wrapped)
+			$.data @inputField[0], 'languageBox', data
 
 			return this
 
 		bindEvents: ->
 			this.bindSpecialLetterEvents()
 			this.bindInputFieldEvents()
+			this.bindLanguageSwitch() if @allowLanguageChanges
+			return this
 
 		bindSpecialLetterEvents: ->
 			self = this
 
-			@specialLetterList.children('li').bind 'click.languageBox.specialLetter', () ->
+			$("##{@box.attr('id')} ul.special-letters li.clickable").live 'click.languageBox.specialLetter', () ->
 				# now this points to clicked element (li)
 				replaceSelectionWithText { element: self.inputField, text: $(this).text() }, () ->
 					if @useAutocomplete
@@ -154,7 +179,6 @@ closure = ($) ->
 
 		bindInputFieldEvents: ->
 			this.bindFocusEvents()
-			this.bindHighlighting()
 			this.bindKeyCombinations()
 
 		bindFocusEvents: ->
@@ -167,18 +191,11 @@ closure = ($) ->
 
 			return this
 
-		bindHighlighting: ->
-			self = this
-
-			@inputField.bind 'keydown.languageBox.highlight', 'alt+b', (event) ->
-				event.preventDefault()
-				replaceSelectionWithText { element: self.inputField, text: "[#{self.inputField.caret().text}]" }
-
-			return this
-
 		bindKeyCombinations: ->
 			this.prepareKeyCombinations()
 			self = this
+
+			@inputField.unbind 'keydown.languageBox.combinations'
 
 			for combination in @combinations
 				@inputField.bind 'keydown.languageBox.combinations', combination, (event) ->
@@ -198,11 +215,57 @@ closure = ($) ->
 
 		prepareKeyCombinations: ->
 			formats = @options.combinationFormats
+			letters = @options.specialLetter.list[@lang]
+
 			@combinations = []
 
-			for format in [formats.small, formats.capital]
-				for number in [1..9]
-					@combinations.push format.replace('NUMBER', number)
+			for attribute in ['small', 'capital']
+				format = formats[attribute]
+				lettersBySize = letters[attribute]
+
+				if letters
+					for number in [1..letters.length]
+						@combinations.push format.replace('NUMBER', number)
+
+		bindLanguageSwitch: ->
+			self = this
+
+			@flag.bind 'click.switchToNextLanguage', (event) ->
+				event.preventDefault()
+				self.switchToNextLanguage()
+				self.bindKeyCombinations()
+				self.inputField.focus()
+
+			return this
+
+		switchToNextLanguage: () ->
+			data = $.data @inputField[0], 'languageBox'
+			self = this
+
+			if data.languages? && data.languages.length > 1
+				@specialLetterList.children('li').remove()
+
+				@lang = data.lang = this.nextLanguage(data.lang, data.languages)
+				@box.attr({ 'lang': @lang }) if @box.attr('lang')?
+				@flag.attr this.languageMarkerFlagAttributesByLang(data.lang)
+
+				$.each this.mergeAllLettersIntoOneListByLang(data.lang), (index, letter) ->
+					self.buildSpecialLetterListItemByLetter(letter)
+
+				$.data @inputField[0], 'languageBox', data
+				self.options.languageChangeCallback(@lang) if self.options.languageChangeCallback?
+
+			return this
+
+		nextLanguage: (lang, languages) ->
+			index = $.inArray lang, languages
+
+			if index < languages.length - 1
+				index += 1
+			else
+				index = 0
+
+			languages[index]
 
 		setUpAutocomplete: ->
 			if @useAutocomplete
@@ -228,7 +291,11 @@ closure = ($) ->
 			capital: 'alt+shift+NUMBER'
 
 		text: ''
+
 		lang: 'en'
+		languages: null
+		languageChangeCallback: null
+
 		inputFieldNameFormat: 'translations[LANG]'
 		placeholder: null
 
@@ -269,9 +336,6 @@ closure = ($) ->
 		sourceUrl: '/'
 		imagesDirectory: '/assets'
 
-		termMapper: (text) ->
-			return text.replace(/\[|\]/g, '')
-
 		autocomplete:
 			minLength: 2
 
@@ -293,7 +357,7 @@ closure = ($) ->
 			source: (request, response) ->
 				inputField = this.element[0]
 				data = $.data inputField, 'languageBox'
-				term = data.termMapper $(inputField).val()
+				term = $(inputField).val()
 
 				if data.sourceUrl.length > 0
 					$.getJSON data.sourceUrl, { term: term, lang: data.lang }, (data) ->

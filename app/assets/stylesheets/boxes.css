@@ -17,6 +17,12 @@
   .language-box .lang, .word-box .lang {
     float: right;
     padding: 3px 5px 0px 5px; }
+    .language-box .lang .lang-link, .word-box .lang .lang-link {
+      display: block;
+      width: 20px;
+      height: 13px;
+      padding: 0;
+      border: 0; }
     .language-box .lang .flag, .word-box .lang .flag {
       width: 18px;
       height: 11px;

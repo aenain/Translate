@@ -5,7 +5,9 @@ class WordsController < ApplicationController
 
   def search
     @query = params[:query]
-    @results = Search.new(@query).words.where(lang: Language::AVAILABLE)
+    @lang = params[:lang]
+
+    @results = Search.new(@query, lang: @lang).words.where(lang: Language::AVAILABLE)
 
     if @results.length == 1
       redirect_to @results.first

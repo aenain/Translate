@@ -24,6 +24,7 @@
           %li{ class: menu_item_class(/exams/) }= link_to 'Quiz', exam_path_considering_session
           %li
             %form#search-form{ action: search_words_path }
+              = hidden_field_tag :lang, Language::PRIMARY
               .search-box
 
             = link_to 'Search', '#'
@@ -35,11 +36,9 @@
 
       :javascript
         $(function() {
-          $.fn.languageBox.defaults.width = '513px';
-          $('#german').languageBox({ lang: 'de', autocomplete: 'false' });
-      
           // search
-          $('#search-form .search-box').languageBox({ lang: 'pl', layout: 'compact', autocomplete: 'false', width: '281px', placeholder: 'Search...', inputFieldNameFormat: 'query' });
+          $('#search-form .search-box').languageBox({ lang: '#{Language::PRIMARY}', languages: ['pl', 'de'], layout: 'compact', autocomplete: 'false', width: '281px', placeholder: 'Search...', inputFieldNameFormat: 'query', languageChangeCallback: function(new_lang) { $("#lang").val(new_lang); } });
+
           $('#search-form, #search-form + a').mouseover(function() {
             $('#search-form:visible').clearQueue();
             $('#search-form').not(':visible').fadeIn(200);

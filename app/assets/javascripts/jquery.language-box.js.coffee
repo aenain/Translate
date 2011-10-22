@@ -219,12 +219,12 @@ closure = ($) ->
 
 			@combinations = []
 
-			for attribute in ['small', 'capital']
-				format = formats[attribute]
-				lettersBySize = letters[attribute]
+			for size in ['small', 'capital']
+				format = formats[size]
+				lettersBySize = letters[size]
 
-				if letters
-					for number in [1..letters.length]
+				if lettersBySize?
+					for number in [1..lettersBySize.length]
 						@combinations.push format.replace('NUMBER', number)
 
 		bindLanguageSwitch: ->

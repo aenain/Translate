@@ -150,13 +150,15 @@ input, select {
       height: 11px;
       border: 1px solid black; }
   .language-box ul, .word-box ul {
-    overflow: hidden; }
+    overflow: hidden;
+    margin-top: -1px; }
     .language-box ul.ui-menu, .word-box ul.ui-menu {
       max-height: 21px; }
     .language-box ul li, .word-box ul li {
       display: block;
       float: left;
       position: relative;
+      margin: 1px;
       padding: 3px 5px;
       border: 1px solid white;
       font: bold 11px "Lucida Grande";
@@ -453,6 +455,8 @@ input[type='button'], input[type='submit'], .pagination a, .actions a {
     font-size: 16px; }
   .content .word-box.scalable {
     height: auto; }
+    .content .word-box.scalable ul {
+      margin-top: 0; }
     .content .word-box.scalable.min-height-73 {
       min-height: 73px; }
     .content .word-box.scalable.min-height-91 {

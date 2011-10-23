@@ -1,5 +1,5 @@
 class Word < ActiveRecord::Base
-  RECENT_LIMIT = 17
+  RECENT_LIMIT = 19
 
   has_many :exam_entries, as: :question, dependent: :destroy
   has_many :translatings, as: :original, dependent: :destroy

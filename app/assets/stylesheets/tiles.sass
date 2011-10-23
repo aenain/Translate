@@ -50,6 +50,9 @@ body > .page
   float: right
   padding: 0
 
+.error
+  color: #ce5973 !important
+
 a
   display: block
   text-decoration: none
@@ -263,6 +266,16 @@ input[type='button'], input[type='submit'], .pagination a, .actions a
     ul
       max-width: 473px
 
+    .add-item
+      display: block
+      position: absolute
+      margin: 53px 0 0 476px
+      background-color: $linkBackgroundColor
+      border-color: $linkBorderColor
+      color: #fff
+      font-weight: bold
+      font-size: 16px
+
     &.scalable
       height: auto
 
@@ -280,6 +293,9 @@ input[type='button'], input[type='submit'], .pagination a, .actions a
 
   .two-tiles-height
     height: 85px
+
+  .tile-horizontal, .tile-vertical
+    overflow: hidden
 
   .tile-vertical
     margin-top: $tileMargin

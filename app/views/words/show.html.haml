@@ -21,33 +21,30 @@
   .tile-vertical
     = word_box(translations, class: 'scalable') do |translation|
       %li.word.clickable.removeable
-        = link_to '', remove_translation_word_path(@word, translation_id: translation), :method => :delete, :remote => true, :class => 'remove'
-        = link_to translation.name, translation, :class => 'block'
+        = link_to '', word_translation_path(@word, translation), method: 'delete', remote: true, class: 'remove'
+        = link_to translation.name, translation, class: 'block'
 
     .actions
-      = link_to 'Add', new_translation_word_path(@word, lang: lang), class: 'next'
+      = link_to 'Add', new_word_translation_path(@word, lang: lang), class: 'next'
 
 - if @missing_translation_languages.present?
   .tile-vertical
     .actions.one-line
       - @missing_translation_languages.each do |lang|
-        %a.next.with-flag{ href: new_translation_word_path(@word, lang: lang) }
+        %a.next.with-flag{ href: new_word_translation_path(@word, lang: lang) }
           = image_tag "/assets/flag-#{lang}.png", class: 'flag'
           Add
 
-/ there has to be javascript instead of coffeescript because of problems with different encodings
-:javascript
-  $(function() {
-    $('#edit .language-box').languageBox({ text: "#{@word.name}", inputFieldNameFormat: 'word[name]', height: '95px', width: '513px' });
-  });
-
 :coffeescript
   $ () ->
-    $(".word-box ul li.removeable .remove").bind 'click.hideAfterRemove', () -> $(this).parent().remove()
+    $(".word-box ul li.removeable .remove").click 'click.hideAfterRemove', () -> $(this).parent().remove()
+
     $("#show .word-box .clickable").bind 'click.renderEdit', (event) ->
       event.preventDefault()
       $("#show, #edit").toggleClass('hidden')
       $("#edit textarea").focus()
+
+    $("#edit .language-box").languageBox { text: "#{@word.name}", inputFieldNameFormat: 'word[name]', height: '95px', width: '513px' }
 
     $("#edit textarea").bind 'keydown.doneEditing', 'return', (event) ->
       event.preventDefault()

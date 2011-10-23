@@ -1,98 +1,33 @@
 .title
-  %h1 New Translation
+  %h1 New Word
 
 .tile-vertical
-  / we have to force route because (against convention) @word can be an existing word...
-  = form_for @word, url: words_path, method: :post do |f|
+  = form_for @word, url: words_path do |f|
     = f.hidden_field :lang
-    = hidden_field_tag :step, 1
-
-    .language-input.primary-language{ lang: Language::PRIMARY }
-
-    - (Language::FOREIGN).each do |lang|
-      .language-input.hidden{ lang: lang }
+    .language-input
 
     .actions
-      = f.submit 'Create', class: 'next hidden'
+      - if @word.errors.any?
+        %h3.description.error
+          = @word.errors.full_messages.join(', ')
 
-      %input.next{ type: 'button', value: 'Continue' }
-      %input.prev.hidden{ type: 'button', value: 'Back' }
-
-:javascript
-  $(function() {
-    $('.content .primary-language').languageBox({ sourceUrl: '#{autocomplete_words_path}', inputFieldNameFormat: 'word[name]', word: '#{@word.name}', width: '513px', height: '93px' });
-    $('.content .primary-language textarea').focus()
-  });
+      = f.submit 'Create', class: 'next'
 
 :coffeescript
   $ () ->
-    $(".content .language-input:not('.primary-language')").languageBox { sourceUrl: '#{autocomplete_words_path}', width: '513px', height: '93px' }
+    languageBoxOptions =
+      sourceUrl: "#{autocomplete_words_path}"
+      inputFieldNameFormat: 'word[name]'
+      lang: "#{@word.lang}"
+      text: "#{@word.name}"
+      width: '513px'
+      height: '93px'
+      languages: document.languages
+      languageChangeCallback: (new_lang) ->
+        $('#word_lang').val new_lang
 
-    # pressing enter on focused textareas indicates continuing the flow
+    $('.content .language-input').languageBox(languageBoxOptions).find('textarea').focus()
+
     $('.content .language-input textarea').bind 'keydown.nextStep', 'return', (event) ->
       event.preventDefault()
-      $(this).parents('.language-input').siblings('.actions').children('.next:visible').trigger 'click'
-
-    steps =
-      range:
-        min: 1
-        max: $('.content .language-input').length
-
-      step:
-        get: () -> Number $("#step").val()
-        set: (step) -> $("#step").val step
-
-      next: (@element) ->
-        step = @step.get()
-
-        if step < @range.max
-          @findPrevButton().removeClass('hidden')
-          @findCurrentBox().addClass('hidden')
-          @findNextBox().removeClass('hidden').find('textarea').focus()
-
-          @step.set step + 1
-
-        if step + 1 >= @range.max
-          @element.addClass('hidden')
-          @findSubmitButton().removeClass('hidden')
-
-      prev: (@element) ->
-        step = @step.get()
-
-        if step > @range.min
-          @findCurrentBox().addClass('hidden')
-          @findPrevBox().removeClass('hidden').find('textarea').focus()
-          @findNextButton().removeClass('hidden')
-          @findSubmitButton().addClass('hidden')
-
-          @step.set step - 1
-
-        if step - 1 <= @range.min
-          @element.addClass('hidden')
-
-      findCurrentBox: () ->
-        $ @findBoxes()[@step.get() - 1]
-
-      findPrevBox: () ->
-        $ @findBoxes()[@step.get() - 2]
-
-      findNextBox: () ->
-        $ @findBoxes()[@step.get()]
-
-      findBoxes: () ->
-        @element.parents('form').find('.language-box')
-
-      findPrevButton: () ->
-        @element.siblings('.prev')
-
-      findNextButton: () ->
-        @element.siblings('.next')
-
-      findSubmitButton: () ->
-        @element.siblings("input[type='submit']")
-
-
-    $('form .actions .next').bind 'click.nextLanguageBox', () -> steps.next $(this)
-
-    $('form .actions .prev').bind 'click.prevLanguageBox', () -> steps.prev $(this)
-      
+      $(this).parents('form').submit()

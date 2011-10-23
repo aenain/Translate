@@ -262,6 +262,9 @@ body > .page {
   float: right;
   padding: 0; }
 
+.error {
+  color: #ce5973 !important; }
+
 a {
   display: block;
   text-decoration: none;
@@ -439,6 +442,15 @@ input[type='button'], input[type='submit'], .pagination a, .actions a {
   height: 21px; }
   .content .word-box ul {
     max-width: 473px; }
+  .content .word-box .add-item {
+    display: block;
+    position: absolute;
+    margin: 53px 0 0 476px;
+    background-color: #37ce80;
+    border-color: #2ebd73;
+    color: white;
+    font-weight: bold;
+    font-size: 16px; }
   .content .word-box.scalable {
     height: auto; }
     .content .word-box.scalable.min-height-73 {
@@ -451,6 +463,8 @@ input[type='button'], input[type='submit'], .pagination a, .actions a {
   padding-bottom: 9px !important; }
 .content .two-tiles-height {
   height: 85px; }
+.content .tile-horizontal, .content .tile-vertical {
+  overflow: hidden; }
 .content .tile-vertical {
   margin-top: 5px;
   margin-bottom: 5px;

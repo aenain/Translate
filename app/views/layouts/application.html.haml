@@ -11,7 +11,7 @@
   %body
     .page
       .top-bar
-        %a{ href: '/' }
+        %a{ href: '/', title: 'Still in alpha phase ;)' }
           #logo
 
           /= link_to "What is this all about?", how_static_path, class: 'handwritten', style: 'float: right; margin-top: 16px'
@@ -20,7 +20,7 @@
 
       .navigation
         %ul.menu
-          %li{ class: menu_item_class(/words/) }= link_to 'Words', words_path
+          %li{ class: menu_item_class(/words|translations/) }= link_to 'Words', words_path
           %li{ class: menu_item_class(/exams/) }= link_to 'Quiz', exam_path_considering_session
           %li
             %form#search-form{ action: search_words_path }
@@ -29,20 +29,38 @@
 
             = link_to 'Search', '#'
 
-          %li= link_to '+', new_word_path, class: 'add'
+          %li= link_to '+', new_translation_path, class: 'add', title: 'Add New Translation'
 
       .content
         = yield
 
       :javascript
-        $(function() {
-          // search
-          $('#search-form .search-box').languageBox({ lang: '#{Language::PRIMARY}', languages: ['pl', 'de'], layout: 'compact', autocomplete: 'false', width: '281px', placeholder: 'Search...', inputFieldNameFormat: 'query', languageChangeCallback: function(new_lang) { $("#lang").val(new_lang); } });
+        document.languages = #{array_or_string_for_javascript(Language::AVAILABLE)};
 
-          $('#search-form, #search-form + a').mouseover(function() {
-            $('#search-form:visible').clearQueue();
-            $('#search-form').not(':visible').fadeIn(200);
-          }).mouseout(function() {
-            $('#search-form:visible').delay(100).queue(function() { $(this).fadeOut(200).dequeue(); });
-          });
-        });
+      :coffeescript
+        $ () ->
+          # fix for remote calling delete links.
+          $('a.remove').click (event) ->
+            event.preventDefault()
+            $.post $(this).attr('href'), { _method: 'delete' }
+          
+          # search
+          searchOptions =
+            lang: '#{Language::PRIMARY}'
+            languages: document.languages
+            layout: 'compact'
+            autocomplete: false
+            width: '281px'
+            placeholder: 'Search...'
+            inputFieldNameFormat: 'query'
+            languageChangeCallback: (new_lang) ->
+              $('#lang').val new_lang
+          
+          $('#search-form .search-box').languageBox searchOptions
+          
+          $('#search-form, #search-form + a').mouseover () ->
+            $('#search-form:visible').clearQueue()
+            $('#search-form').not(':visible').fadeIn(200)
+          
+          $('#search-form, #search-form + a').mouseout () ->
+            $('#search-form:visible').delay(100).queue () -> $(this).fadeOut(200).dequeue()

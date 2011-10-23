@@ -1,4 +1,6 @@
 class Word < ActiveRecord::Base
+  RECENT_LIMIT = 17
+
   has_many :exam_entries, as: :question, dependent: :destroy
   has_many :translatings, as: :original, dependent: :destroy
   has_many :translations, through: :translatings, source: :translated, source_type: self.name, uniq: true do

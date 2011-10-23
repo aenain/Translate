@@ -4,6 +4,10 @@
 - Language::AVAILABLE.each do |lang|
   - if @words[lang].present?
     .tile-vertical
-      = word_box(@words[lang].first(15), class: 'scalable min-height-73') do |word|
+      = word_box(@words[lang].first(Word::RECENT_LIMIT), class: 'scalable min-height-73') do |word|
         %li.clickable
           = link_to word.name, word, class: 'block'
+
+    .tile-vertical
+      .actions.one-line
+        = link_to 'Add', new_word_path(lang: lang), class: 'next'

@@ -4,7 +4,7 @@
     %span.h-additional-info for "#{@word.name}"
 
 .tile-vertical
-  = form_for @word, url: create_translation_word_path(@word), method: :post do |f|
+  = form_for @word, url: word_translations_path(@word), method: :post do |f|
     = hidden_field_tag 'translation[lang]', @lang
     #translation.language-input{ lang: @lang }
 

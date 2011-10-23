@@ -7,15 +7,14 @@ Translate::Application.routes.draw do
     collection do
       get 'autocomplete'
       get 'search'
-      get 'test'
     end
 
-    member do
-      get 'new_translation'
-      post 'create_translation'
-      delete 'remove_translation'
-    end
+    # translations for certain word
+    resources :translations, :only => [:new, :create, :destroy], :module => 'words'
   end
+
+  # translations created from scratch
+  resources :translations, :only => [:new, :create]
 
   resources :exams, :only => [:new, :create, :show] do
     member do

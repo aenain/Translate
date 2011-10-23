@@ -21,6 +21,8 @@ closure = ($) ->
 	class Box
 		constructor: (@box, @options) ->
 			@lang = @box.attr('lang') || @options.lang
+			@text = @box.attr('text') || @options.text
+
 			@useAutocomplete = (typeof @options.autocomplete == 'object' and @options.autocomplete)
 			@allowLanguageChanges = (typeof @options.languages == 'object' && @options.languages)
 
@@ -115,7 +117,7 @@ closure = ($) ->
 		  else
 		    @inputField = $("<input />").attr('type', 'text')
 
-		  @inputField.val(@options.text).attr('name', name).css(cssParams)
+		  @inputField.val(@text).attr('name', name).css(cssParams)
 		  @inputField.attr('placeholder', @options.placeholder) if @options.placeholder?
 		  @inputField.appendTo(@box)
 

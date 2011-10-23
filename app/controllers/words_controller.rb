@@ -1,6 +1,10 @@
 class WordsController < ApplicationController
+  RECENT_LIMIT_FOR_GROUPS = (Language::AVAILABLE.count * Word::RECENT_LIMIT * 1.4).ceil
+
+  before_filter :load_word, :only => [:show, :update, :destroy]
+
   def index
-    @words = Word.where(lang: Language::AVAILABLE).order('created_at DESC').group_by(&:lang)
+    @words = Word.where(lang: Language::AVAILABLE).order('created_at DESC').limit(RECENT_LIMIT_FOR_GROUPS).group_by(&:lang)
   end
 
   def search
@@ -16,37 +20,25 @@ class WordsController < ApplicationController
     end
   end
 
-  def show
-    @word = Word.find(params[:id])
-    @translations = @word.translations.all(conditions: { lang: Language::AVAILABLE }, order: 'name ASC').group_by(&:lang)
-    @missing_translation_languages = Language::AVAILABLE - [@word.lang] - @translations.keys
-  end
-
   def new
-    if params[:word_id].present?
-      @word = Word.find_by_id_and_lang(params[:word_id], Language::PRIMARY)
-    end
-
-    @word ||= Word.new(lang: Language::PRIMARY)
+    @word = Word.new(lang: params[:lang] || Language::PRIMARY)
   end
 
   def create
     @word = Word.find_or_build(params[:word])
-
-    if @word.save!
-      params[:translations].each do |(lang, name)|
-        next unless name.present?
-        @word.translations.find_or_create_by_lang_and_name!(lang, name)
-      end
-
-      redirect_to @word
+    if @word.save # it will not be saved if name is empty
+      redirect_to words_path
     else
       render :new
     end
   end
 
+  def show
+    @translations = @word.translations.all(conditions: { lang: Language::AVAILABLE }, order: 'name ASC').group_by(&:lang)
+    @missing_translation_languages = Language::AVAILABLE - [@word.lang] - @translations.keys
+  end
+
   def update
-    @word = Word.find(params[:id])
     @word.update_attributes(params[:word]) # TODO! sensowna obsługa błedów...
 
     if request.xhr?
@@ -57,32 +49,9 @@ class WordsController < ApplicationController
   end
 
   def destroy
-    @word = Word.find(params[:id])
     @word.destroy
 
     redirect_to words_url
-  end
-
-  def new_translation
-    @word = Word.find(params[:id])
-    @lang = params[:lang] || (Language::AVAILABLE - @word.lang).first
-  end
-
-  def create_translation
-    @word = Word.find(params[:id])
-    lang, name = params[:translation][:lang], params[:translation][:name]
-
-    @word.translations.find_or_create_by_lang_and_name!(lang, name)
-    redirect_to @word
-  end
-
-  def remove_translation
-    @word = Word.find(params[:id])
-    @translation = Word.find(params[:translation_id])
-
-    @word.translatings.where(translated_id: @translation.id, translated_type: @translation.class.name).first.destroy
-
-    render :nothing => true
   end
 
   def autocomplete
@@ -92,6 +61,9 @@ class WordsController < ApplicationController
     render :json => @words
   end
 
-  def test
+  private
+
+  def load_word
+    @word = Word.find(params[:id])
   end
 end

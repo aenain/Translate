@@ -11,7 +11,8 @@
     .language-box{ lang: @word.lang }
 
     .actions
-      = f.submit "Done"
+      = f.submit 'Save'
+      %input.prev{ type: 'button', value: 'Cancel' }
 
 .title.tile-vertical
   %h2 Translations
@@ -44,10 +45,17 @@
       event.preventDefault()
       $("#edit form").trigger 'remoteSubmit'
 
+    $("#edit .actions .prev").bind 'click.discardChanges', () ->
+      $("#show, #edit").toggleClass('hidden')
+      $("#edit textarea").val $("#show .word-box .clickable a").text()
+
+      return true
+
     $("#edit textarea").bind 'keydown.discardChanges', 'esc', () ->
+      event.preventDefault()
+
       if $("#edit").is(':visible')
-        $("#show, #edit").toggleClass('hidden')
-        $("#edit textarea").val $("#show .word-box .clickable a").text()
+        $('#edit .actions .prev').trigger 'click.discardChanges'
 
       return true
 

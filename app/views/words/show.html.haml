@@ -22,7 +22,7 @@
     = word_box(translations, class: 'scalable') do |translation|
       %li.word.clickable.removeable
         = link_to '', word_translation_path(@word, translation), method: 'delete', remote: true, class: 'remove'
-        = link_to translation.name, translation, class: 'block'
+        = link_to translation.name, translation
 
     .actions
       = link_to 'Add', new_word_translation_path(@word, lang: lang), class: 'next'
@@ -56,7 +56,7 @@
 
       return true
 
-    $("#edit textarea").bind 'keydown.discardChanges', 'esc', () ->
+    $("#edit textarea").bind 'keydown.discardChanges', 'esc', (event) ->
       event.preventDefault()
 
       if $("#edit").is(':visible')

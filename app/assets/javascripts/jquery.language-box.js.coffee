@@ -170,7 +170,7 @@ closure = ($) ->
 		bindSpecialLetterEvents: ->
 			self = this
 
-			$("##{@box.attr('id')} ul.special-letters li.clickable").live 'click.languageBox.specialLetter', () ->
+			$("##{@box.attr('id')} ul.special-letters").delegate 'li.clickable', 'click.languageBox.specialLetter', (event) ->
 				# now this points to clicked element (li)
 				replaceSelectionWithText { element: self.inputField, text: $(this).text() }, () ->
 					if @useAutocomplete

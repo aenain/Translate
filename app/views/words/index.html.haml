@@ -6,7 +6,7 @@
     .tile-vertical
       = word_box(@words[lang].first(Word::RECENT_LIMIT), class: 'scalable min-height-91') do |word|
         %li.clickable
-          = link_to word.name, word, class: 'block'
+          = link_to word.name, word
 
       .actions
         = link_to 'Add', new_word_path(lang: lang), class: 'next'

@@ -127,7 +127,9 @@ input, select {
   border: 1px solid #cccccc; }
   .language-box.focus, .language-box:hover, .word-box.focus, .word-box:hover {
     border-color: #bbbbbb;
-    box-shadow: inset 0 0 1px 0 #cccccc; }
+    box-shadow: inset 0 0 1px 0 #cccccc;
+    -moz-box-shadow: inset 0 0 1px 0 #cccccc;
+    -webkit-box-shadow: inset 0 0 1px 0 #cccccc; }
   .language-box .main-bar, .word-box .main-bar {
     overflow: hidden;
     width: 100%;
@@ -159,10 +161,11 @@ input, select {
       float: left;
       position: relative;
       margin: 1px;
-      padding: 3px 5px;
+      padding: 3px 5px 3px 5px;
       border: 1px solid white;
       font: bold 11px "Lucida Grande";
       line-height: 13px !important;
+      letter-spacing: 0;
       color: #aaaaaa; }
       .language-box ul li a, .word-box ul li a {
         color: inherit;
@@ -174,12 +177,14 @@ input, select {
         color: #777777;
         border-color: #cccccc;
         box-shadow: 0 0 1px #dddddd;
+        -moz-box-shadow: 0 0 1px #dddddd;
+        -webkit-box-shadow: 0 0 1px #dddddd;
         border-radius: 2px; }
       .language-box ul li.clickable.removeable, .word-box ul li.clickable.removeable {
         padding-right: 12px; }
         .language-box ul li.clickable.removeable .remove, .word-box ul li.clickable.removeable .remove {
           position: absolute;
-          top: -2px;
+          top: -3px;
           right: 1px;
           display: none;
           color: #dddddd;
@@ -190,10 +195,6 @@ input, select {
             color: #888888; }
         .language-box ul li.clickable.removeable:hover .remove, .word-box ul li.clickable.removeable:hover .remove {
           display: block; }
-        .language-box ul li.clickable.removeable.block, .word-box ul li.clickable.removeable.block {
-          display: block;
-          padding: 3px 5px;
-          margin: -3px -5px; }
   .language-box form, .word-box form {
     float: left; }
     .language-box form input[type='text'], .word-box form input[type='text'] {
@@ -206,6 +207,7 @@ input, select {
       .language-box form input[type='text']:focus, .word-box form input[type='text']:focus {
         outline: none; }
   .language-box textarea, .language-box input[type='text'], .word-box textarea, .word-box input[type='text'] {
+    letter-spacing: 0;
     outline: none;
     margin: 0;
     padding: 3px;
@@ -241,12 +243,13 @@ body {
   height: 34px;
   background: white url("/images/logo-alpha.png") 0 0 no-repeat; }
 
-.handwritten {
-  color: #37ce80;
-  font-family: "Nanum Pen Script";
-  font-size: 21px;
-  font-weight: 100;
-  padding: 0 3px; }
+.about-link {
+  display: block;
+  float: right;
+  height: 24px;
+  width: 176px;
+  margin: 12px 1px -5px 0;
+  padding: 0; }
 
 body > .page {
   margin: 0 auto;
@@ -285,7 +288,10 @@ a {
     border: 1px solid #2ebd73;
     display: block;
     color: white;
+    transform: rotate(90deg);
     -webkit-transform: rotate(90deg);
+    -moz-transform: rotate(90deg);
+    -o-transform: rotate(90deg);
     text-shadow: -1px 1px 0 #2ebd73; }
     .navigation .menu li a.add {
       font-size: 45px;
@@ -317,7 +323,10 @@ a {
       border-color: #2ebd73; }
       .navigation .menu li #search-form .search-box a {
         background-color: transparent;
-        -webkit-transform: rotate(0); }
+        transform: rotate(0);
+        -webkit-transform: rotate(0);
+        -moz-transform: rotate(0);
+        -o-transform: rotate(0); }
       .navigation .menu li #search-form .search-box.focus, .navigation .menu li #search-form .search-box:hover {
         border-color: #29a967; }
 
@@ -411,7 +420,6 @@ input[type='button'], input[type='submit'], .pagination a, .actions a {
   height: 25px;
   width: 75px;
   border: 0;
-  padding: 0;
   background-color: #37ce80;
   color: white;
   font-weight: bold;
@@ -438,7 +446,9 @@ input[type='button'], input[type='submit'], .pagination a, .actions a {
   border: 1px solid #eeeeee; }
   .content .language-box.focus, .content .language-box:hover, .content .word-box.focus, .content .word-box:hover {
     border-color: #dddddd;
-    box-shadow: inset 0 0 0 0 white; }
+    box-shadow: inset 0 0 0 0 white;
+    -moz-box-shadow: inset 0 0 0 0 white;
+    -webkit-box-shadow: inset 0 0 0 0 white; }
 .content .word-box {
   width: 513px;
   height: 21px; }
@@ -455,6 +465,8 @@ input[type='button'], input[type='submit'], .pagination a, .actions a {
     font-size: 16px; }
   .content .word-box.scalable {
     height: auto; }
+    .content .word-box.scalable .lang {
+      margin-top: 1px; }
     .content .word-box.scalable ul {
       margin-top: 0; }
     .content .word-box.scalable.min-height-73 {
@@ -472,7 +484,6 @@ input[type='button'], input[type='submit'], .pagination a, .actions a {
 .content .tile-horizontal, .content .tile-vertical {
   overflow: hidden; }
 .content .tile-vertical {
-  margin-top: 5px;
   margin-bottom: 5px;
   min-height: 30px; }
   .content .tile-vertical.first {
@@ -534,7 +545,8 @@ input[type='button'], input[type='submit'], .pagination a, .actions a {
   .author-info .about-author {
     font-size: 12px;
     line-height: 16px;
-    text-align: justify; }
+    text-align: justify;
+    letter-spacing: 0; }
   .author-info a {
     display: inline;
     color: #37ce80; }
@@ -545,7 +557,8 @@ input[type='button'], input[type='submit'], .pagination a, .actions a {
   font-size: 12px;
   line-height: 16px;
   text-align: justify;
-  margin-top: 3px; }
+  margin-top: 3px;
+  letter-spacing: 0; }
   .point .hint {
     display: inline;
     padding: 1px 2px;

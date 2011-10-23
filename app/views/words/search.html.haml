@@ -10,7 +10,7 @@
       .tile-vertical{ class: tile_class }
         = word_box(@words[lang].first(15), class: 'scalable') do |word|
           %li.clickable
-            = link_to word.name, word, class: 'block'
+            = link_to word.name, word
 
 - else
   .results.tile-vertical Nothing found

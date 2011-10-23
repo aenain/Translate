@@ -19,6 +19,7 @@ class WordsController < ApplicationController
   def show
     @word = Word.find(params[:id])
     @translations = @word.translations.all(conditions: { lang: Language::AVAILABLE }, order: 'name ASC').group_by(&:lang)
+    @missing_translation_languages = Language::AVAILABLE - [@word.lang] - @translations.keys
   end
 
   def new

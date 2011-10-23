@@ -201,7 +201,7 @@ h3
     padding-top: 6px
 
   &.one-line
-    padding: 3px 0 0 0
+    padding: 2px 0 1px 0
     clear: right
     float: right
 
@@ -236,6 +236,17 @@ input[type='button'], input[type='submit'], .pagination a, .actions a
     background-color: $notImportantLinkBackgroundColor
     border-color: $notImportantLinkBorderColor
     text-shadow: 0 -1px 0 $notImportantLinkBorderColor
+
+  &.with-flag
+    width: 93px
+    overflow: hidden
+
+    .flag
+      float: left
+      border: 1px solid #000
+      height: 11px
+      width: 18px
+      margin: 2px 0 0 8px
 
 .content
   .language-box, .word-box
@@ -293,6 +304,9 @@ input[type='button'], input[type='submit'], .pagination a, .actions a
 
   .tiles-container
     overflow: hidden
+
+    & > .tile-vertical:first-child
+      margin-top: 0
 
   .tiles-container .pagination, .pagination
     background-color: #fff

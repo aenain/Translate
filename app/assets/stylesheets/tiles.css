@@ -388,7 +388,7 @@ h3 {
   .actions.low, .additional-info.low {
     padding-top: 6px; }
   .actions.one-line, .additional-info.one-line {
-    padding: 3px 0 0 0;
+    padding: 2px 0 1px 0;
     clear: right;
     float: right; }
   .actions input[type='button'], .actions input[type='submit'], .additional-info input[type='button'], .additional-info input[type='submit'] {
@@ -419,6 +419,15 @@ input[type='button'], input[type='submit'], .pagination a, .actions a {
     background-color: #bbbbbb;
     border-color: #aeaeae;
     text-shadow: 0 -1px 0 #aeaeae; }
+  input[type='button'].with-flag, input[type='submit'].with-flag, .pagination a.with-flag, .actions a.with-flag {
+    width: 93px;
+    overflow: hidden; }
+    input[type='button'].with-flag .flag, input[type='submit'].with-flag .flag, .pagination a.with-flag .flag, .actions a.with-flag .flag {
+      float: left;
+      border: 1px solid black;
+      height: 11px;
+      width: 18px;
+      margin: 2px 0 0 8px; }
 
 .content .language-box, .content .word-box {
   border: 1px solid #eeeeee; }
@@ -460,6 +469,8 @@ input[type='button'], input[type='submit'], .pagination a, .actions a {
     margin-left: 0; }
 .content .tiles-container {
   overflow: hidden; }
+  .content .tiles-container > .tile-vertical:first-child {
+    margin-top: 0; }
 .content .tiles-container .pagination, .content .pagination {
   background-color: white;
   padding: 0;

@@ -27,6 +27,14 @@
     .actions
       = link_to 'Add', new_translation_word_path(@word, lang: lang), class: 'next'
 
+- if @missing_translation_languages.present?
+  .tile-vertical
+    .actions.one-line
+      - @missing_translation_languages.each do |lang|
+        %a.next.with-flag{ href: new_translation_word_path(@word, lang: lang) }
+          = image_tag "/assets/flag-#{lang}.png", class: 'flag'
+          Add
+
 / there has to be javascript instead of coffeescript because of problems with different encodings
 :javascript
   $(function() {

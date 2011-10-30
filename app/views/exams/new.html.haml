@@ -18,7 +18,7 @@
     .max-value Today
 
 .tile-vertical
-  = form_for @exam, html: { style: 'width: 100%; overflow: hidden' } do |f|
+  = form_for @exam, class: 'full-width' do |f|
     .hidden
       = f.hidden_field :lang
       = f.hidden_field :start_at

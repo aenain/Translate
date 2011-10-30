@@ -121,7 +121,8 @@ input, select {
   display: none !important; }
 
 .full-width {
-  width: 100% !important; }
+  width: 100% !important;
+  overflow: hidden; }
 
 .language-box, .word-box {
   width: 550px;
@@ -403,7 +404,7 @@ h3 {
     .actions.main h1, .actions.main h2, .actions.main h3, .additional-info.main h1, .additional-info.main h2, .additional-info.main h3 {
       padding-top: 0; }
   .actions.low, .additional-info.low {
-    padding-top: 6px; }
+    padding-top: 5px; }
   .actions.one-line, .additional-info.one-line {
     padding: 2px 0 1px 0;
     clear: right;

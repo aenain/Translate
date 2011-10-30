@@ -51,9 +51,7 @@ class Exam < ActiveRecord::Base
       translations = word.translations.by_lang(languages)
 
       unless translations.empty?
-        if translations.count == 1
-          translation = translations.first
-
+        translations.each do |translation|
           if translation.translations.count < 2
             word_ids -= [translation.id]
           end

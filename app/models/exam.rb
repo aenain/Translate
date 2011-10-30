@@ -4,11 +4,12 @@ class Exam < ActiveRecord::Base
   has_many :entries, class_name: 'ExamEntry', order: 'position', dependent: :destroy
 
   validates :lang, presence: true, inclusion: { in: Language::AVAILABLE }
+  validate :words_presence_in_given_range
 
   after_create :create_entries
 
   def create_entries
-    words = self.class.select_words_by_languages(languages)
+    words = self.class.select_words(languages: languages, creation_dates: start_at..stop_at)
 
     words.each do |word|
       answer_lang = (languages - [word.lang]).first || Language::PRIMARY
@@ -21,15 +22,28 @@ class Exam < ActiveRecord::Base
     entries
   end
 
+  def words_presence_in_given_range
+    return true # TODO! implement this.
+  end
+
+  def self.estimate_words_count(options = {})
+    languages = options[:languages]
+    creation_dates = options[:creation_dates]
+
+    Word.by_lang(languages).by_creation_date(creation_dates).count
+  end
+
   protected
 
   def languages
     [Language::PRIMARY, lang]
   end
 
-  def self.select_words_by_languages(languages = [])
-    # silence assumption that +word+ has translation in +answer_lang+.
-    word_ids = Word.where(lang: languages).all(select: 'id').map(&:id).shuffle.first(LENGTH)
+  def self.select_words(options = {})
+    languages = options[:languages]
+    creation_dates = options[:creation_dates]
+    # TODO! silence assumption that +word+ has translation in +answer_lang+.
+    word_ids = Word.by_lang(languages).by_creation_date(creation_dates).all(select: 'id').map(&:id).shuffle.first(LENGTH)
     words = Word.where(id: word_ids).all
   end
 end

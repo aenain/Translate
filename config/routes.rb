@@ -22,6 +22,10 @@ Translate::Application.routes.draw do
       get 'summary'
       get 'wrong_answers_listing'
     end
+
+    collection do
+      get 'estimate_words_count'
+    end
   end
 
   match '/' => 'words#index'

@@ -1,11 +1,120 @@
 .title
-  %h1 New Test
+  %h1 New Quiz
+
+  .lang{ title: 'Change Language' }
+    = link_to image_tag("/assets/flag-#{@exam.lang}.png", class: 'flag'), '#languageSwitch', id: 'examLanguageSwitch', lang: @exam.lang
+
+.tile-vertical
+  .slider-container
+    #time-range.slider
+
+    .min-value #{Word.first.created_at.strftime('%b %d, %Y')}
+
+    .description
+      %span#start-at-label.value #{@exam.start_at.strftime('%b %d, %Y')}
+      to
+      %span#stop-at-label.value #{@exam.stop_at.strftime('%b %d, %Y')}
+
+    .max-value Today
 
 .tile-vertical
   = form_for @exam, html: { style: 'width: 100%; overflow: hidden' } do |f|
-    %div{ style: 'float: left' }
-      = f.label :lang, 'Choose Language'
-      = f.select :lang, Language::FOREIGN
+    .hidden
+      = f.hidden_field :lang
+      = f.hidden_field :start_at
+      = f.hidden_field :stop_at
 
-    .actions.one-line
+    .actions.one-line.full-width
+      %h3.description
+        Words Timeline
+
+        %span.h-additional-info
+          %span#estimated-words-count.value
+          Available Words
+
       = f.submit 'Create'
+
+:javascript
+  document.examLanguages = #{array_or_string_for_javascript(Language::FOREIGN)};
+
+:coffeescript
+  $ () ->
+    class RDate
+      ABBR_MONTHNAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+      constructor: (@date) ->
+
+      addDays: (n) ->
+        new RDate(new Date @date.getTime() + (n * 24 * 3600 * 1000))
+
+      # in contrast to pure javascript we numerate months as usual in our life (in ruby too): 1 means Januar
+      setMonth: (n) ->
+        @date.setFullYear @date.getFullYear(), n - 1, @date.getDate()
+
+      # in contrast to pure javascript we numerate months as usual in our life (in ruby too): 1 means Januar 
+      getMonth: () ->
+        @date.getMonth() + 1
+
+      format: () ->
+        ABBR_MONTHNAMES[@date.getMonth()] + ' ' + @date.getDate() + ', ' + @date.getFullYear()
+
+      toString: (separator = '/') ->
+        "" + @date.getFullYear() + separator + this.getMonth() + separator + @date.getDate()
+
+    estimateWords = () ->
+      $.get "#{estimate_words_count_exams_path}", $("#new_exam").serialize(), (response) ->
+        $('#estimated-words-count').text(response.count)
+        $submitButton = $("#new_exam input[type='submit']")
+
+        if parseInt(response.count) == 0
+          $submitButton.addClass('disabled').prop('disabled', true)
+        else if $submitButton.prop('disabled')
+          $submitButton.removeClass('disabled').prop('disabled', false)
+
+    nextLanguage = (lang, languages) ->
+      index = $.inArray lang, languages
+
+      if index < languages.length - 1
+        index += 1
+      else
+        index = 0
+
+      languages[index]
+
+    $('#examLanguageSwitch').click (event) ->
+      event.preventDefault()
+
+      oldLanguage = $(this).attr('lang')
+      newLanguage = nextLanguage oldLanguage, document.examLanguages
+
+      $(this).attr('lang', newLanguage)
+      $(this).find('img.flag').attr({ src: '/assets/flag-' + newLanguage + '.png', alt: 'Flag-' + newLanguage })
+      $("#exam_lang").val newLanguage
+
+      estimateWords()
+
+    sliderOptions =
+      range: true
+      min: 0 # numerowanie dni od pierwszego słowa
+      max: parseInt "#{@days}"
+      values: [0, parseInt("#{@days}")] # initial values
+      slide: (event, ui) ->
+        startDays = parseInt ui.values[0]
+        stopDays = parseInt ui.values[1]
+
+        start_at = start_date.addDays startDays
+        stop_at = start_date.addDays stopDays
+
+        $('#start-at-label').text start_at.format()
+        $('#stop-at-label').text stop_at.format()
+
+        $('#exam_start_at').val start_at.toString('-')
+        $('#exam_stop_at').val stop_at.toString('-')
+
+      change: (event, ui) ->
+        estimateWords()
+    
+    start_date = new RDate(new Date("#{(@start_date).strftime}"))
+    estimateWords()
+
+    $('#time-range').slider sliderOptions

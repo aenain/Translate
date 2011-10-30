@@ -95,7 +95,13 @@ class Word < ActiveRecord::Base
   #   scope
   # }
 
-  scope :by_lang, lambda { |lang| where(lang: lang) }
+  scope :by_lang, lambda { |*lang| where(lang: lang) }
+  scope :by_creation_date, lambda { |date_range|
+    start_at = date_range.first.beginning_of_day
+    stop_at = date_range.last.end_of_day
+
+    where(created_at: start_at..stop_at)
+  }
 
   def self.find_or_build(params = {})
     first(conditions: params) || new(params)

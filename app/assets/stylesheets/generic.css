@@ -41,3 +41,6 @@
 
 .hidden {
   display: none !important; }
+
+.full-width {
+  width: 100% !important; }

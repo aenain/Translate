@@ -42,6 +42,9 @@
 .hidden {
   display: none !important; }
 
+.full-width {
+  width: 100% !important; }
+
 body {
   background-color: white;
   border: 3px solid #37ce80;

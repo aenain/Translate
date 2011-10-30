@@ -1,7 +1,11 @@
 class ExamsController < ApplicationController
   before_filter :load_exam, only: [:summary, :wrong_answers_listing]
+
   def new
-    @exam = Exam.new
+    @exam = Exam.new(start_at: Word.first.created_at.to_date, stop_at: Word.last.created_at.to_date, lang: Language::FOREIGN.first)
+
+    @start_date = Word.first.created_at.to_date
+    @days = (Date.today - @start_date).to_i + 1
   end
 
   def create
@@ -19,9 +23,12 @@ class ExamsController < ApplicationController
   def show
     @exam = Exam.find(session[:current_exam_id] || params[:id])
     @entry = @exam.entries.awaiting.first
-    @how_many_left = @exam.entries.last.position - @entry.position + 1
 
-    redirect_to summary_exam_path if @entry.nil?
+    if @entry.nil?
+      redirect_to summary_exam_path
+    else
+      @how_many_left = @exam.entries.last.position - @entry.position + 1
+    end
   end
 
   def summary
@@ -51,6 +58,14 @@ class ExamsController < ApplicationController
         render :nothing => true
       end
     end
+  end
+
+  def estimate_words_count
+    start_at = Date.parse(params[:exam][:start_at])
+    stop_at = Date.parse(params[:exam][:stop_at])
+
+    @count = Exam.estimate_words_count(languages: [Language::PRIMARY, params[:exam][:lang]], creation_dates: start_at..stop_at)
+    render :json => { count: @count }
   end
 
   def wrong_answers_listing

@@ -4,7 +4,7 @@
     %title Translate
     = favicon_link_tag '/images/favicon.png', type: 'image/png'
 
-    = stylesheet_link_tag "tiles"
+    = stylesheet_link_tag "tiles", "jquery.ui.slider"
 
     - if request.env['HTTP_USER_AGENT'] =~ /Firefox/
       = stylesheet_link_tag "ff_fix"

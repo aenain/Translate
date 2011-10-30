@@ -224,6 +224,14 @@ h3
     padding-top: 3px
     color: $activeLinkBackgroundColor
 
+    .h-additional-info
+      font-weight: normal
+      font-size: 12px
+      padding-left: 10px
+
+      .value
+        font-weight: bold
+
     &.right
       float: right
 
@@ -256,6 +264,13 @@ input[type='button'], input[type='submit'], .pagination a, .actions a
       height: 11px
       width: 18px
       margin: 2px 0 0 8px
+
+  &.disabled
+    background-color: #ccc
+    border-color: darken(#ccc, 5%)
+    text-shadow: 0 -1px 0 darken(#ccc, 5%)
+    opacity: 0.7
+    cursor: default
 
 .content
   .language-box, .word-box
@@ -419,3 +434,63 @@ input[type='button'], input[type='submit'], .pagination a, .actions a
     color: #fff
     border-color: $notImportantLinkBorderColor
     border-radius: 3px
+
+.slider-container
+  padding: 10px
+  overflow: hidden
+
+  .min-value, .max-value, .description
+    font-size: 10px
+    padding-top: 1px
+    margin-bottom: -2px
+    border: 1px solid #eee
+    color: #bbb
+    width: 75px
+
+  .min-value
+    padding-left: 3px
+    border-width: 0 0 0 1px
+    float: left
+    text-align: left
+
+  .max-value
+    padding-right: 3px
+    border-width: 0 1px 0 0
+    float: right
+    text-align: right
+
+  .description
+    width: 347px
+    border-width: 0
+    float: left
+    text-align: center
+
+    .value
+      color: $activeLinkBackgroundColor
+
+  .slider
+    background: transparent
+    border-top: 1px solid #ccc
+    border-left: 1px solid #eee
+    border-right: 1px solid #eee
+    height: 6px
+
+    &#time-range
+      width: 503px
+
+    .ui-slider-handle
+      background-color: #fff
+      border: 1px solid #ccc
+
+      border-radius: 0
+      outline: none
+
+    .ui-slider-range
+      background-color: $linkBackgroundColor
+      border: 1px solid $linkBorderColor
+      border-width: 1px 0
+      height: 7px
+
+.tile-vertical
+  .slider-container
+    padding: 6px 10px 0 10px

@@ -42,8 +42,29 @@ class Exam < ActiveRecord::Base
   def self.select_words(options = {})
     languages = options[:languages]
     creation_dates = options[:creation_dates]
-    # TODO! silence assumption that +word+ has translation in +answer_lang+.
-    word_ids = Word.by_lang(languages).by_creation_date(creation_dates).all(select: 'id').map(&:id).shuffle.first(LENGTH)
-    words = Word.where(id: word_ids).all
+
+    word_ids = Word.by_lang(languages).by_creation_date(creation_dates).all(select: 'id').map(&:id).shuffle
+    words = []
+
+    while words.count < LENGTH and word_ids.present?
+      word = Word.find(word_ids.shift)
+      translations = word.translations.by_lang(languages)
+
+      unless translations.empty?
+        if translations.count == 1
+          translation = translations.first
+
+          if translation.translations.count < 2
+            word_ids -= [translation.id]
+          end
+        end
+
+        words << word
+        word_ids.shuffle!
+      end
+    end
+
+    words
   end
+
 end

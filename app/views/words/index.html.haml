@@ -3,8 +3,8 @@
 
 - Language::AVAILABLE.each do |lang|
   - if @words[lang].present?
-    .tile-vertical
-      = word_box(@words[lang].first(Word::RECENT_LIMIT), class: 'scalable min-height-91') do |word|
+    .tile-vertical.bottom-9
+      = word_box(@words[lang].first(Word::RECENT_LIMIT), class: 'scalable min-height-92') do |word|
         %li.clickable
           = link_to word.name, word
 

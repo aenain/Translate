@@ -14,9 +14,12 @@
   :coffeescript
     $ () ->
       $('#translation').languageBox { sourceUrl: '#{autocomplete_words_path}', width: '513px', height: '93px', inputFieldNameFormat: 'translation[name]' }
-
+      
       $('#translation textarea').focus()
-
+      
       $('.content .language-input textarea').bind 'keydown.submitForm', 'return', (event) ->
         event.preventDefault()
         $(this).parents('form').submit()
+      
+      $('.content form').bind 'submit.disableButton', () ->
+        $(this).find("input[type='submit']").addClass('disabled').prop('disabled', true)

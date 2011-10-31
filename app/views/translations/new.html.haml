@@ -45,6 +45,9 @@
       event.preventDefault()
       $(this).parents('.language-input').siblings('.actions').children('.next:visible').trigger 'click'
 
+    $('.content form').bind 'submit.disableButton', () ->
+      $(this).find("input[type='submit']").addClass('disabled').prop('disabled', true)
+
     steps =
       range:
         min: 1
@@ -56,16 +59,16 @@
 
       next: (@element) ->
         step = @step.get()
+        @findPrevButton().addClass('hidden')
 
         if step < @range.max
-          @findPrevButton().removeClass('hidden')
           @findCurrentBox().addClass('hidden')
           @findNextBox().removeClass('hidden').find('textarea').focus()
 
           @step.set step + 1
 
         if step + 1 >= @range.max
-          @element.addClass('hidden')
+          @element.addClass('hidden') if @element.attr('type') != 'submit'
           @findSubmitButton().removeClass('hidden')
 
       prev: (@element) ->

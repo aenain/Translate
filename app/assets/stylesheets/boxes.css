@@ -33,7 +33,7 @@
     overflow: hidden;
     margin-top: -1px; }
     .language-box ul.ui-menu, .word-box ul.ui-menu {
-      max-height: 21px; }
+      max-height: 23px; }
     .language-box ul li, .word-box ul li {
       display: block;
       float: left;
@@ -99,7 +99,7 @@
     height: 50px;
     min-height: 50px;
     max-height: 50px;
-    padding-bottom: 23px; }
+    padding-bottom: 28px; }
     .language-box textarea.with-prompts, .word-box textarea.with-prompts {
       padding-bottom: 2px; }
 

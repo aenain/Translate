@@ -59,16 +59,20 @@
 
       next: (@element) ->
         step = @step.get()
-        @findPrevButton().addClass('hidden')
 
         if step < @range.max
+          @findPrevButton().removeClass('hidden')
           @findCurrentBox().addClass('hidden')
           @findNextBox().removeClass('hidden').find('textarea').focus()
 
           @step.set step + 1
 
         if step + 1 >= @range.max
-          @element.addClass('hidden') if @element.attr('type') != 'submit'
+          if @element.attr('type') == 'submit'
+            @findPrevButton().addClass('hidden')
+          else
+            @element.addClass('hidden')
+
           @findSubmitButton().removeClass('hidden')
 
       prev: (@element) ->

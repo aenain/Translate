@@ -29,32 +29,54 @@
       pluralized = if count == 1 then 'Question' else 'Questions'
       $('#how-many-left').text(count.toString() + ' ' + pluralized)
 
-    submitForm = ($form) ->
-      $.post $form.attr('action'), $form.serialize(), (response) ->
-        if response.redirect?
-          window.location.href = response.redirect
-          return false
+    class Form
+      constructor: (@form) ->
+        @submitButton = @form.find("input[type='submit']")
+        this.preventDefaultSubmitOnClick()
 
-        updateWordBox $('#question'), response.question
-        updateForm $form, $.extend({ reset: true }, response.entry)
-        updateQuestionsCounter response.how_many_left
+      update: (options) ->
+        self = this
+        this.enableSubmit()
 
-    updateForm = ($form, options) ->
-      if options.reset?
-        action = '#{answer_exam_path}'.replace(/\d+/, options.id)
-        $form.attr('action', action).find('#exam_entry_id').val(options.id)
-        $('#answer').attr('lang', options.answer_lang).empty()
+        if options.reset?
+          action = '#{answer_exam_path}'.replace(/\d+/, options.id)
+          @form.attr('action', action).find('#exam_entry_id').val(options.id)
+          $('#answer').attr('lang', options.answer_lang).empty()
 
-      $('#answer').languageBox { autocomplete: false, inputFieldNameFormat: 'exam_entry[answer]', width: '513px', height: '93px' }
-      $('#answer textarea').focus().bind 'keydown.nextQuestion', 'return', (event) ->
-        event.preventDefault()
-        $form.trigger 'submitForm'
+        $('#answer').languageBox { autocomplete: false, inputFieldNameFormat: 'exam_entry[answer]', width: '513px', height: '93px' }
+        $('#answer textarea').focus().bind 'keydown.nextQuestion', 'return', (event) ->
+          event.preventDefault()
+          self.submit()
 
-    $form = $('.edit_exam_entry').bind 'submitForm', (event) -> submitForm($(this))
-    $form.find("input[type='submit']").bind 'click', (event) ->
-      event.preventDefault()
-      $form.trigger('submitForm')
+      submit: () ->
+        self = this
+        this.disableSubmit()
 
-    updateForm $form, {}
+        $.post @form.attr('action'), @form.serialize(), (response) ->
+          if response.redirect?
+            window.location.href = response.redirect
+            return false
+
+          updateWordBox $('#question'), response.question
+          self.update $.extend({ reset: true }, response.entry)
+          updateQuestionsCounter response.how_many_left
+
+      enableSubmit: () ->
+        @submitButton.removeClass('disabled').prop('disabled', false)
+
+      disableSubmit: () ->
+        @submitButton.addClass('disabled').prop('disabled', true)
+
+      preventDefaultSubmitOnClick: () ->
+        self = this
+
+        @submitButton.bind 'click', (event) ->
+          event.preventDefault()
+          self.submit()
+
+    $form = $('.edit_exam_entry')
+
+    form = new Form($form)
+    form.update {}
 
     $form.find('textarea').focus()

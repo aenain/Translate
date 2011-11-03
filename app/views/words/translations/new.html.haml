@@ -20,6 +20,3 @@
       $('.content .language-input textarea').bind 'keydown.submitForm', 'return', (event) ->
         event.preventDefault()
         $(this).parents('form').submit()
-      
-      $('.content form').bind 'submit.disableButton', () ->
-        $(this).find("input[type='submit']").addClass('disabled').prop('disabled', true)

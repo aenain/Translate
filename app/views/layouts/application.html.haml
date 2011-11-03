@@ -51,6 +51,10 @@
             event.preventDefault()
             $.post $(this).attr('href'), { _method: 'delete' }
           
+          # disabling submit buttons after sendind form
+          $('.content form').has(".actions input[type='submit']").bind "submit.disableButton", () ->
+            $(this).find(".actions input[type='submit']").addClass('disabled').prop('disabled', true)
+          
           # search
           searchOptions =
             lang: '#{Language::PRIMARY}'

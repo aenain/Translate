@@ -45,9 +45,6 @@
       event.preventDefault()
       $(this).parents('.language-input').siblings('.actions').children('.next:visible').trigger 'click'
 
-    $('.content form').bind 'submit.disableButton', () ->
-      $(this).find("input[type='submit']").addClass('disabled').prop('disabled', true)
-
     steps =
       range:
         min: 1

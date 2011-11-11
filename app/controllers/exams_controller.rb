@@ -5,7 +5,8 @@ class ExamsController < ApplicationController
     @exam = Exam.new(start_at: Word.first.created_at.to_date, stop_at: Word.last.created_at.to_date, lang: Language::FOREIGN.first)
 
     @start_date = Word.first.created_at.to_date
-    @days = (Date.today - @start_date).to_i + 1
+    @days = (Date.today - @start_date).to_i
+    @days = 1 if @days.zero?
   end
 
   def create

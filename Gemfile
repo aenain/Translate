@@ -31,7 +31,7 @@ group :assets do
 end
 
 gem 'jquery-rails'
-gem 'taps'
+# gem 'taps'
 
 # Gravatar
 gem 'gravatar_image_tag'

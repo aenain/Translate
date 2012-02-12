@@ -1,9 +1,10 @@
 class Word < ActiveRecord::Base
   RECENT_LIMIT = 19
 
-  has_many :exam_entries, as: :question, dependent: :destroy
-  has_many :translatings, as: :original, dependent: :destroy
-  has_many :translations, through: :translatings, source: :translated, source_type: self.name, uniq: true do
+  has_many :exam_entries, dependent: :destroy
+  has_many :translatings, foreign_key: 'original_id', dependent: :destroy
+
+  has_many :translations, through: :translatings, source: :translated, class_name: self.name, uniq: true do
     # there was a problem with this association when called methods like below (find_or_create_by...)
     # because it doesn't save translating object (inverse_of doesn't support neither has_many through association nor polymorphic)
     def find_or_create_by_lang_and_name!(lang, name)
@@ -48,50 +49,50 @@ class Word < ActiveRecord::Base
   #   else
   #     usage = options.delete(:usage)
   #     usage = "search" unless %w{quiz search autocomplete}.include?(usage)
-  # 
+  #
   #     Word.send(:"by_name_for_#{usage}", name, options)
   #   end
   # }
-  # 
+  #
   # scope :by_name_for_quiz, lambda { |name, options = {}|
   #   like_condition = 'words.name like :like_name and char_length(words.name) <= 1.18 * :length'
   #   scope_options = { like_name: "%#{name}%", length: name.length }
-  # 
+  #
   #   scope = where(like_condition, scope_options).order('name ASC')
-  # 
+  #
   #   if scope.count.zero?
   #     levenstein_condition = "ratio_as_words_array(words.name, :exact_name) >= 0.85 and char_length(words.name) <= 1.18 * :length"
   #     scope = where("(#{like_condition}) or (#{levenstein_condition})", scope_options.merge(exact_name: name)).order('name ASC')
   #   end
-  # 
+  #
   #   scope
   # }
-  # 
+  #
   # scope :by_name_for_search, lambda { |name, options = {}|
   #   like_condition = 'name like :like_name'
   #   scope_options = { like_name: "%#{name}%" }
-  # 
+  #
   #   scope = where(like_condition, scope_options).order('name ASC')
-  # 
+  #
   #   if name.length >= 2 and scope.count.zero?
   #     levenstein_condition = "ratio_as_words_array(words.name, :exact_name) >= 0.7"
   #     scope = where("(#{like_condition}) or (#{levenstein_condition})", scope_options.merge(exact_name: name)).order('name ASC')
   #   end
-  # 
+  #
   #   scope
   # }
-  # 
+  #
   # scope :by_name_for_autocomplete, lambda { |name, options = {}|
   #   like_condition = 'name like :like_name'
   #   scope_options = { like_name: "%#{name}%" }
-  # 
+  #
   #   scope = where(like_condition, scope_options).order('name ASC')
-  # 
+  #
   #   if scope.count < options[:limit].to_i
   #     levenstein_condition = "ratio_as_words_array(name, :exact_name) >= 0.7"
   #     scope = where("(#{like_condition}) or (#{levenstein_condition})", scope_options.merge(exact_name: name)).order('name ASC').limit(options[:limit])
   #   end
-  # 
+  #
   #   scope
   # }
 

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111027193646) do
+ActiveRecord::Schema.define(:version => 20120212163602) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.integer  "resource_id",   :null => false
@@ -48,12 +48,11 @@ ActiveRecord::Schema.define(:version => 20111027193646) do
 
   create_table "exam_entries", :force => true do |t|
     t.integer  "exam_id"
-    t.integer  "question_id"
-    t.string   "question_type"
+    t.integer  "word_id"
     t.string   "answer_lang"
     t.boolean  "correct"
     t.integer  "position"
-    t.integer  "score",         :default => 1
+    t.integer  "score",        :default => 1
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "given_answer"
@@ -72,9 +71,7 @@ ActiveRecord::Schema.define(:version => 20111027193646) do
 
   create_table "translatings", :force => true do |t|
     t.integer  "original_id"
-    t.string   "original_type"
     t.integer  "translated_id"
-    t.string   "translated_type"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

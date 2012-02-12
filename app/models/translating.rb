@@ -1,20 +1,15 @@
 class Translating < ActiveRecord::Base
-  belongs_to :original, polymorphic: true
-  belongs_to :translated, polymorphic: true
+  belongs_to :original
+  belongs_to :translated
 
-  validates :original_id, presence: true, uniqueness: { scope: [:original_type, :translated_id, :translated_type] }
+  validates :original_id, presence: true, uniqueness: { scope: [:translated_id] }
   validates :translated_id, presence: true
-  validate :identity_of_original_and_translated_types
 
   after_create :create_reverse_translating
   after_destroy :remove_reverse_translating
 
-  def identity_of_original_and_translated_types
-    return self.original_type == self.translated_type
-  end
-
   def create_reverse_translating
-    Translating.create reverse_params
+    Translating.create(reverse_params)
   end
 
   def remove_reverse_translating
@@ -25,7 +20,7 @@ class Translating < ActiveRecord::Base
   private
 
   def reverse_params
-    { original_id: self.translated_id, original_type: self.translated_type,
-      translated_id: self.original_id, translated_type: self.original_type }
+    { original_id: self.translated_id,
+      translated_id: self.original_id }
   end
 end

@@ -2,13 +2,12 @@ class ExamEntry < ActiveRecord::Base
   MIN_ACCEPTABLE_MATCH_RATIO = 0.85
 
   belongs_to :exam
-  belongs_to :question, polymorphic: true
+  belongs_to :word
 
   acts_as_list :scope => :exam
 
   validates :exam_id, presence: true
-  validates :question_id, presence: true
-  validates :question_type, presence: true
+  validates :word_id, presence: true
 
   scope :awaiting, where(given_answer: nil)
   scope :wrong, where(correct: false)
@@ -32,7 +31,7 @@ class ExamEntry < ActiveRecord::Base
   end
 
   def possible_answers
-    question.translations.by_lang(answer_lang)
+    word.translations.by_lang(answer_lang)
   end
 
   def match_answer?(answer)

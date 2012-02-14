@@ -7,3 +7,4 @@ tmp/
 .DS_Store
 /.rvmrc
 /public/assets/*.gz
+/app/assets/stylesheets/active_admin*.css

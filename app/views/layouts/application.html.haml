@@ -14,7 +14,7 @@
 
     = javascript_include_tag "jquery-1.6.4.min", "jquery.ui-1.8.16.custom", "jquery.caret.1.02", "jquery.fcbkcomplete.min", "jquery.hotkeys", "jquery.identify", "jquery.language-box"
     = csrf_meta_tags
- 
+
   %body
     .page
       .top-bar
@@ -50,11 +50,11 @@
           $('a.remove').click (event) ->
             event.preventDefault()
             $.post $(this).attr('href'), { _method: 'delete' }
-          
+
           # disabling submit buttons after sendind form
           $('.content form').has(".actions input[type='submit']").bind "submit.disableButton", () ->
             $(this).find(".actions input[type='submit']").addClass('disabled').prop('disabled', true)
-          
+
           # search
           searchOptions =
             lang: '#{Language::PRIMARY}'
@@ -66,12 +66,12 @@
             inputFieldNameFormat: 'query'
             languageChangeCallback: (new_lang) ->
               $('#lang').val new_lang
-          
+
           $('#search-form .search-box').languageBox searchOptions
-          
+
           $('#search-form, #search-form + a').mouseover () ->
             $('#search-form:visible').clearQueue()
             $('#search-form').not(':visible').fadeIn(200)
-          
+
           $('#search-form, #search-form + a').mouseout () ->
             $('#search-form:visible').delay(100).queue () -> $(this).fadeOut(200).dequeue()

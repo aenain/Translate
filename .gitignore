@@ -8,3 +8,4 @@ tmp/
 /.rvmrc
 /public/assets/*.gz
 /app/assets/stylesheets/active_admin*.css
+*.md

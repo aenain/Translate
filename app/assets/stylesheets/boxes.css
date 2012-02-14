@@ -84,14 +84,14 @@
       color: #777777; }
       .language-box form input[type='text']:focus, .word-box form input[type='text']:focus {
         outline: none; }
-  .language-box textarea, .language-box input[type='text'], .word-box textarea, .word-box input[type='text'] {
+  .language-box textarea, .language-box input[type='text'], .language-box .input-area, .word-box textarea, .word-box input[type='text'], .word-box .input-area {
     letter-spacing: 0;
     outline: none;
     margin: 0;
     padding: 3px;
     border: 0;
     font: normal 11px "Lucida Grande"; }
-  .language-box textarea, .word-box textarea {
+  .language-box textarea, .language-box .input-area, .word-box textarea, .word-box .input-area {
     resize: none;
     width: 544px;
     min-width: 544px;
@@ -100,8 +100,15 @@
     min-height: 50px;
     max-height: 50px;
     padding-bottom: 28px; }
-    .language-box textarea.with-prompts, .word-box textarea.with-prompts {
+    .language-box textarea.with-prompts, .language-box .input-area.with-prompts, .word-box textarea.with-prompts, .word-box .input-area.with-prompts {
       padding-bottom: 2px; }
+  .language-box .input-area, .word-box .input-area {
+    color: #777777; }
+    .language-box .input-area input[type="text"].in-line, .language-box .input-area .from-input, .word-box .input-area input[type="text"].in-line, .word-box .input-area .from-input {
+      display: inline-block;
+      padding: 0 3px 6px 3px;
+      text-align: center;
+      color: black; }
 
 .word-box {
   overflow: hidden;

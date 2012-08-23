@@ -30,7 +30,13 @@ class Word < ActiveRecord::Base
     end
   end
 
-  validates :name, presence: :true, uniqueness: { scope: :lang }
+  has_many :contexts, through: :translatings, source: :original_context, class_name: Context.name
+  has_many :translated_contexts, through: :translatings, source: :translated_context, class_name: Context.name
+
+  has_many :reverse_translatings, foreign_key: :translated_id, inverse_of: :translated
+  has_many :reverse_translations, through: :reverse_translatings, source: :original, class_name: self.name, uniq: true
+
+  validates :name, presence: :true, uniqueness: { scope: [:lang] }
   validates :lang, presence: :true
 
   scope :polish,  where(lang: 'pl')
@@ -106,6 +112,11 @@ class Word < ActiveRecord::Base
 
   def self.find_or_build(params = {})
     first(conditions: params) || new(params)
+  end
+
+  def build_translation(params = {})
+    translating = self.translatings.build
+    translating.build_translated(params)
   end
 
   def for_js

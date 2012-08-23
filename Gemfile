@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rails', '~> 3.1.0'
+gem 'rails', '~> 3.2.0'
 gem 'pg'
 
 # Bundle edge Rails instead:
@@ -22,11 +22,12 @@ gem 'rails_config'
 gem 'state_machine'
 
 gem 'will_paginate', :git => 'https://github.com/p7r/will_paginate.git', :branch => 'rails3'
+gem 'annotate'
 
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
-  gem 'coffee-rails', "~> 3.1.0"
+  gem 'coffee-rails', "~> 3.2.0"
   gem 'uglifier'
 end
 
@@ -37,7 +38,7 @@ gem 'jquery-rails'
 gem 'gravatar_image_tag'
 
 # Sass was in assets group, but it is required by activeadmin.
-gem 'sass-rails', "~> 3.1.0"
+gem 'sass-rails', "~> 3.2.0"
 
 # Admin Panel
 gem 'activeadmin'

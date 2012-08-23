@@ -35,6 +35,7 @@ Translate::Application.routes.draw do
       get 'why'
       get 'how'
       get 'who'
+      get 'documentation'
     end
   end
 

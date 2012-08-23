@@ -1,0 +1,409 @@
+!!! 5
+%html
+  %head
+    %title Translate
+    = favicon_link_tag '/images/favicon.png', type: 'image/png'
+
+    = stylesheet_link_tag 'everything', 'jquery.tipsy'
+    = javascript_include_tag 'jquery-1.7.2.min', 'jquery-ui-1.8.22.custom.min', 'jquery.tipsy', 'quiz-summary', 'quiz', 'routing', 'step'
+    = csrf_meta_tags
+
+    %meta{ name: 'viewport', content: 'width=device-width, initial-scale=1.0, max-scale=1.0, user-scalable=yes' }
+
+  %body.mobile
+    %section.page
+      %header.top-bar
+        %a#logo{ href: '/', title: 'Still in alpha phase ;)' }
+
+        = form_tag search_words_path, id: 'search-form' do
+          = editable_language_box(Language::PRIMARY, name: 'search', class: 'compact search', switch: Language::FOREIGN) do
+            = editable_field_tag('search[query]', '', placeholder: 'Search')
+
+      %nav
+        %ul.menu
+          %li{ class: menu_item_class(/words|translatings/) }= link_to 'Words', words_path
+          %li{ class: menu_item_class(/exams/) }= link_to 'Quiz', exam_path_considering_session
+          %li{ class: menu_item_class(/about/) }= link_to 'About', '#'
+          %li= link_to '+', new_translating_path, class: 'add', id: 'add-new-translation', title: 'New Translation'
+
+      %section.content#search-results
+        %header.main
+          %h1
+            Results
+            %span.h-additional-info
+              for
+              %span.query zapytanie
+
+        - if rand() > 0.5
+          .container.with-lang
+            %p Nothing found. Sorry about that.
+            .lang.pl
+
+        - else
+          .container
+            = language_box_word_list_with_mockup(:pl, %w{Niemiec modrzew wiatr kukułka jajebie}) do |word|
+              %h3{ class: word.require_attention? && 'attention' }= link_to word.name, '#'
+              .additional-info{ class: !on_mobile? && 'hidden' }
+                - %w{contexts translations}.each do |relation|
+                  - count = word.method("#{relation}_count").call
+
+                  .relation
+                    - if count == 0
+                      = link_to "Add #{relation.singularize.humanize}", '#'
+                    - else
+                      .count= count
+                      = relation.singularize.humanize.pluralize(count) 
+
+      %section.content#new-translation
+        %header.main
+          %h1 New Translation
+
+        = form_tag '#', class: 'container' do
+          .step.current
+            = editable_language_box(Language::PRIMARY, for: :word, class: 'word-with-context', switch: Language::FOREIGN) do
+              = editable_field_tag :word, '', autocorrect: 'off', autocapitalize: 'off', placeholder: 'Word', class: 'first-line'
+              %hr
+              = editable_field_tag :context, '', autocorrect: 'off', autocapitalize: 'off', placeholder: 'Context'
+
+            .actions
+              = submit_tag "Continue", class: 'primary next-step'
+
+          .step
+            = editable_language_box(Language::FOREIGN.first, for: :word, class: 'word-with-context', switch: Language::AVAILABLE - [Language::FOREIGN.first]) do
+              = editable_field_tag :word, '', autocorrect: 'off', autocapitalize: 'off', placeholder: 'Word', class: 'first-line'
+              %hr
+              = editable_field_tag :context, '', autocorrect: 'off', autocapitalize: 'off', placeholder: 'Context'
+
+            .actions
+              = link_to "Back", '#', class: 'secondary prev-step'
+              = submit_tag "Create", class: 'primary'
+
+      %section.content#words
+        %header.main
+          %h1 Recent Words
+
+        .container
+          = language_box_word_list_with_mockup(:de, %w{Niemiec modrzew wiatr kukułka jajebie} * 6) do |word|
+            %h3{ class: word.require_attention? && 'attention' }= link_to word.name, '#'
+            .additional-info{ class: !on_mobile? && 'hidden' }
+              - %w{contexts translations}.each do |relation|
+                - count = word.method("#{relation}_count").call
+
+                .relation
+                  - if count == 0
+                    = link_to "Add #{relation.singularize.humanize}", '#'
+                  - else
+                    .count= count
+                    = relation.singularize.humanize.pluralize(count)
+
+          .actions
+            = link_to "New Word", '#', class: 'primary'
+
+        .container
+          = language_box_word_list_with_mockup(:pl, %w{Niemiec modrzew wiatr kukułka jajebie} * 3) do |word|
+            %h3= link_to word.name, '#'
+            .additional-info{ class: !on_mobile? && 'hidden' }
+              - %w{contexts translations}.each do |relation|
+                - count = word.method("#{relation}_count").call
+
+                .relation
+                  - if count == 0
+                    = link_to "Add #{relation.singularize.humanize}", '#'
+                  - else
+                    .count= count
+                    = relation.singularize.humanize.pluralize(count)
+
+          .actions
+            = link_to "New Word", '#', class: 'primary'
+
+      %section.content#quiz
+        %ul.container#question-list
+          - answers = Array.new(20) { rand < 0.8 }
+          - answers.each_with_index do |correct, index|
+            %li{ class: index > 0 && 'hidden', data: index < 2 && { correct: [true, false].shuffle.first.to_s } }
+              %header.main.question.translation
+                %h3 angeben #{index}
+                %p Ich habe dich mein Auto angegeben.
+                .lang.de
+
+              = form_tag '#', class: 'container answer' do
+                = editable_language_box(:pl, name: 'answer', autocomplete: false, class: 'answer') do
+                  = editable_field_tag :word, '', autocorrect: 'off', autocapitalize: 'off', placeholder: 'Word', class: 'first-line'
+
+                .actions
+                  = submit_tag "Answer", class: 'primary'
+
+        .container.progress
+          .bar-container
+            #question-count-progress.progress-bar
+            #correct-answer-progress.progress-bar.correct
+
+          .summary
+            .metric
+              %span#current-question-number
+              of
+              %span#question-count
+
+            #correct-answers-share.metric
+
+      %section.content#quiz-summary
+        - answers = Array.new(20) { rand < 0.8 }; width = 100.0 / answers.count
+        %header.main
+          %h1 518th Quiz Summary
+          .metric.additional-info{ title: 'Correct Answers' }= number_to_percentage(100.0 * answers.count { |a| !! a } / answers.count, precision: 0) 
+
+        .container
+          #answers-bar.answers-correctness-bar
+            - answers.each_with_index do |correct, index|
+              - if correct
+                .correct{ style: "width: #{width}%", class: index == 0 && 'active' }
+              - else
+                .wrong{ style: "width: #{width}%", class: index == 0 && 'active' }
+
+        .container
+          %ul#question-summary-list
+            - answers.each_with_index do |correct, index|
+              %li.question-summary{ class: index > 0 && 'hidden', data: { correct: correct } }
+                .question
+                  %h3 angeben #{index}
+                  %p Ich habe dich mein Auto angegeben.
+                  .lang.de
+
+                .answer
+                  - if !on_mobile?
+                    .correct
+                      %h3 oddać
+                      %p Oddałem ci moje auto.
+
+                    .given.hidden
+                      %h3.wrong oddawać
+                      %p.wrong Your lazy answer.
+
+                  - else
+                    %h3{ title: '<span class="answer">oddawać</span>' } oddać
+                    %p{ title: '<span class="answer">Your lazy wrong answer.</span>' } Oddałem ci moje auto.
+                
+                  .lang.pl
+
+          .actions
+            - if !on_mobile?
+              = link_to 'Your Answer', '#', class: 'secondary additional-action', id: 'toggle-answer'
+            
+            = link_to 'Previous', '#', class: 'secondary prev disabled', id: 'previous-question'
+            = link_to 'Next', '#', class: 'primary next', id: 'next-question'
+
+      %section.content#word
+        %header.main.hoverable#word-show
+          .back
+            = link_to "Remove", '#', class: 'dangerous'
+            = link_to "Edit", '#', class: 'primary', id: 'word-edit-link'
+
+          .front
+            %h1#word-name weird word
+            .lang.de
+
+        = form_tag '#', class: 'container hidden', id: 'word-edit' do
+          = editable_language_box(:de, name: 'word', class: 'word-with-context') do
+            = editable_field_tag :word, '', autocorrect: 'off', autocapitalize: 'off', placeholder: 'Word', class: 'first-line'
+
+          .actions
+            = link_to "Cancel", '#', class: 'secondary', id: 'cancel-word-edit-link'
+            = submit_tag "Save", class: 'primary'
+
+        = form_tag '#', class: 'container', style: 'display: none' do
+          = editable_language_box(:de, class: 'word-with-context') do
+            .editable.first-line{ contenteditable: 'true', data: { placeholder: 'Word' } }
+            %hr
+            .editable{ contenteditable: 'true', data: { placeholder: 'Context' } }
+
+          .actions
+            = link_to "Cancel", '#', class: 'secondary'
+            = submit_tag "Save", class: 'primary'
+
+        = form_tag '#', class: 'container', style: 'display: none' do
+          = editable_language_box(:de, class: 'sentence') do
+            %p
+              Fragment zdania
+              = editable_field_tag :part1, '', placeholder: '...', data: { 'expected-value' => 'Jozek' }
+              do uzupełnienia.
+
+          .actions
+            = link_to "Cancel", '#', class: 'secondary'
+            = submit_tag "Save", class: 'primary'
+
+        = form_tag '#', class: 'container', style: 'display: none' do
+          = editable_language_box(:de, class: 'sentence') do
+            %p
+              Fragment zdania
+              .editable{ contenteditable: 'true', spellcheck: 'false', data: { placeholder: '...', 'expected-value' => 'Jozek' } }
+              do uzupełnienia.
+              A co powiesz na dwa
+              .editable{ contenteditable: 'true', spellcheck: 'false', data: { placeholder: '...', 'expected-value' => 'Jozek' } }
+              ?
+
+          .actions
+            = link_to "Cancel", '#', class: 'secondary'
+            = submit_tag "Save", class: 'primary'
+
+        .sub-header.with-lang
+          %h2 Translations
+          .lang.pl
+
+        %ul.container.translation-list
+          %li.hoverable
+            .back
+              = link_to "Remove", '#', class: 'dangerous'
+              = link_to "Edit", '#', class: 'primary'
+
+            .front
+              %h3 angeben
+              %p Ich habe dich mein Auto angegeben.
+
+          %li.hoverable
+            .back
+              = link_to "Remove", '#', class: 'dangerous'
+              = link_to "Edit", '#', class: 'primary'
+
+            .front
+              %h3 gehen
+              %p Ich gehe ins Kino.
+
+      %footer
+        2012 &copy; Artur Hebda
+  
+  - if !on_mobile?
+    :javascript
+      $(function() {
+        $('.answer *[title], .question *[title]').tipsy({ opacity: 1, html: true, fade: true, gravity: 'w', offset: 10 });
+        $('.main .metric[title], #add-new-translation').tipsy({ opacity: 1, fade: true, gravity: 'n', offset: 0 });
+
+        $('.language-box.list ul li').tipsy({
+          trigger: 'manual',
+          opacity: 1,
+          html: true,
+          fade: true,
+          gravity: 's',
+          title: function() {
+            return $(this).children('.additional-info').html();
+          }
+        }).hover(function() {
+          if (! $(this).hasClass('prevent-tipsy'))
+            $(this).tipsy("show").addClass('with-focus');
+        }, function() {
+          var $tip = $(this).tipsy(true).$tip,
+              $element = $(this);
+
+          setTimeout(function() {
+          if ($tip.is(':hover')) {
+            $tip.bind('mouseleave.hide-itself', function() {
+              $element.addClass('prevent-tipsy');
+              setTimeout(function() {
+                if ($element.not(':hover').length > 0)
+                  $element.tipsy("hide").removeClass('prevent-tipsy with-focus');
+              }, 100);
+            });
+          }
+          else {
+            $element.tipsy("hide").removeClass('prevent-tipsy with-focus');
+          }
+          }, 100);
+        });
+      });
+
+  :javascript
+    $(function() {
+      var KEYCODES = {
+        ENTER:  13,
+        ESCAPE: 27
+      };
+
+      // zmiana języka inputa
+      $('.language-box a[href$=language-switch]').click(function(event) {
+        event.preventDefault();
+
+        var languages = $(this).data('languages').split('|'),
+            indices = { current: 0, next: null };
+
+        for (var i in languages) {
+          if (this.classList.contains(languages[i])) {
+            indices.current = parseInt(i); // i was a string
+            break;
+          }
+        }
+
+        if (indices.current < languages.length - 1)
+          indices.next = indices.current + 1;
+        else
+          indices.next = 0;
+
+        $(this)
+          .addClass(languages[indices.next])
+          .removeClass(languages[indices.current])
+          .trigger('languageBox:switch', languages[indices.next]);
+      });
+
+      // language boksy z ukrytym polem języka
+      $('.language-box:has(input[type=hidden][name$="[lang]"])').bind('languageBox:switch', function(event, lang) {
+        $(this).find('input[type=hidden][name$="[lang]"]').val(lang);
+      });
+
+      // mini routing
+      new Routing('body > .page > .content', {
+        'search': '#search-results',
+        'words': '#words',
+        'word': '#word',
+        'translation': {
+          selector: '#new-translation',
+          callback: function() {
+            if (! $(window).data('translation-step')) {
+              $("#new-translation .step").bind('step:in', function() {
+                $(this).find('input[type=text], [contenteditable=true]').eq(0).focus();
+              });
+              $(window).data('translation-step', new Step($("#new-translation")));
+            }
+          }
+        },
+        'quiz': {
+          selector: '#quiz',
+          callback: function() {
+            if (! $(window).data('quiz')) {
+              $(window).data('quiz', new Quiz({
+                $progressBar: $('#question-count-progress'),
+                $correctnessBar: $('#correct-answer-progress'),
+                $correctnessMetric: $('#correct-answers-share'),
+                $currentQuestionNumber: $('#current-question-number'),
+                $questionList: $('#question-list'),
+                $questionCount: $('#question-count')
+              }));
+            }
+
+            $("#question-list li:visible").eq(0).find('input[type=text], [contenteditable=true]').eq(0).focus();
+          }
+        },
+        'quiz-summary': {
+          selector: '#quiz-summary',
+          callback: function() {
+            if (! $(window).data('quiz-summary')) {
+              $(window).data('quiz-summary', new QuizSummary({
+                $questionList: $('#question-summary-list'),
+                $answerBar: $('#answers-bar'),
+                $prevLink: $('#previous-question'),
+                $nextLink: $('#next-question'),
+                $toggleAnswerLink: $('#toggle-answer')
+              }));
+            }
+          }
+        }
+      }).buildNavigation().dispatch();
+
+      $('#word-edit-link, #cancel-word-edit-link').click(function(event) {
+        $('#word-show, #word-edit').toggleClass('hidden');
+        if ($(this).attr('id') === 'word-edit-link')
+          $('#word-edit').find('input[type=text], [contenteditable=true]').eq(0).focus();
+      });
+
+      $('#word-edit input[type=text], #word-edit [contenteditable=true]').bind('keydown.cancel-on-escape', function(event) {
+        if (event.keyCode == KEYCODES.ESCAPE)
+          $("#cancel-word-edit-link").click();
+      });
+    }); 

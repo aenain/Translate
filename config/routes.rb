@@ -8,9 +8,6 @@ Translate::Application.routes.draw do
       get 'autocomplete'
       post 'search'
     end
-
-    # translations for certain word
-    resources :translations, :only => [:new, :create, :destroy], :module => 'words'
   end
 
   # translatings created from scratch

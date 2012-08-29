@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120717051234) do
+ActiveRecord::Schema.define(:version => 20120829155838) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.integer  "resource_id",   :null => false
@@ -93,5 +93,8 @@ ActiveRecord::Schema.define(:version => 20120717051234) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "words", ["name", "lang"], :name => "index_words_on_name_and_lang", :unique => true
+  add_index "words", ["name"], :name => "index_words_on_name"
 
 end

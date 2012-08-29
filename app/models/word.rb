@@ -1,9 +1,7 @@
 class Word < ActiveRecord::Base
   RECENT_LIMIT = 19
 
-  has_many :exam_entries, dependent: :destroy
   has_many :translatings, foreign_key: 'original_id', dependent: :destroy
-
   has_many :translations, through: :translatings, source: :translated, class_name: self.name, uniq: true do
     # there was a problem with this association when called methods like below (find_or_create_by...)
     # because it doesn't save translating object (inverse_of doesn't support neither has_many through association nor polymorphic)
@@ -36,8 +34,10 @@ class Word < ActiveRecord::Base
   has_many :reverse_translatings, foreign_key: :translated_id, inverse_of: :translated
   has_many :reverse_translations, through: :reverse_translatings, source: :original, class_name: self.name, uniq: true
 
-  validates :name, presence: :true, uniqueness: { scope: [:lang] }
-  validates :lang, presence: :true
+  has_many :exam_entries, dependent: :destroy
+
+  validates :name, presence: true, length: { minimum: 1 }, uniqueness: { scope: [:lang] }
+  validates :lang, presence: true
 
   scope :polish,  where(lang: 'pl')
   scope :english, where(lang: 'en')
@@ -106,17 +106,25 @@ class Word < ActiveRecord::Base
   scope :by_creation_date, lambda { |date_range|
     start_at = date_range.first.beginning_of_day
     stop_at = date_range.last.end_of_day
+    stop_at -= 1.day if date_range.exclude_end? && date_range.last.kind_of?(Date)
 
     where(created_at: start_at..stop_at)
   }
 
-  def self.find_or_build(params = {})
-    first(conditions: params) || new(params)
+  def self.find_or_build(attributes = {})
+    if attributes.include?(:lang) && attributes.include?(:name)
+      where(attributes).first || new(atrtibutes)
+    else
+      new(attributes)
+    end
   end
 
-  def build_translation(params = {})
-    translating = self.translatings.build
-    translating.build_translated(params)
+  def self.find_or_create(attributes = {})
+    if attributes.include?(:lang) && attributes.include?(:name)
+      where(attributes).first || create(attributes)
+    else
+      create(attributes)
+    end
   end
 
   def for_js

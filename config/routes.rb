@@ -6,7 +6,7 @@ Translate::Application.routes.draw do
   resources :words do
     collection do
       get 'autocomplete'
-      get 'search'
+      post 'search'
     end
 
     # translations for certain word

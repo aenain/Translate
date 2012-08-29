@@ -43,7 +43,7 @@ class Exam < ActiveRecord::Base
     languages = options[:languages]
     creation_dates = options[:creation_dates]
 
-    word_ids = Word.by_lang(languages).by_creation_date(creation_dates).all(select: 'id').map(&:id).shuffle
+    word_ids = Word.by_lang(languages).by_creation_date(creation_dates).pluck(:id).shuffle
     words = []
 
     while words.count < LENGTH and word_ids.present?

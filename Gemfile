@@ -61,6 +61,8 @@ end
 group :test do
   # Pretty printed test output
   gem 'turn', :require => false
+  gem 'factory_girl_rails', '~> 4.0'
+  gem 'minitest'
 end
 
 # for Heroku

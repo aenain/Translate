@@ -4,74 +4,31 @@
     %title Translate
     = favicon_link_tag '/images/favicon.png', type: 'image/png'
 
-    = stylesheet_link_tag "tiles", "jquery.ui.slider"
-
-    - if request.env['HTTP_USER_AGENT'] =~ /Firefox/
-      = stylesheet_link_tag "ff_fix"
-
-    - elsif request.env['HTTP_USER_AGENT'] =~ /Opera/
-      = stylesheet_link_tag "opera_fix"
-
-    = javascript_include_tag "jquery-1.6.4.min", "jquery.ui-1.8.16.custom", "jquery.caret.1.02", "jquery.fcbkcomplete.min", "jquery.hotkeys", "jquery.identify", "jquery.language-box"
+    = stylesheet_link_tag 'everything', 'jquery.tipsy'
+    = javascript_include_tag 'jquery-1.7.2.min', 'jquery-ui-1.8.22.custom.min', 'jquery.tipsy'
+    = yield :head if content_for?(:head)
     = csrf_meta_tags
 
+    %meta{ name: 'viewport', content: 'width=device-width, initial-scale=1.0, max-scale=1.0, user-scalable=yes' }
+
   %body
-    .page
-      .top-bar
-        %a{ href: '/', title: 'Still in alpha phase ;)' }
-          #logo
+    %section.page
+      %header.top-bar
+        %a#logo{ href: '/', title: 'Still in alpha phase ;)' }
 
-          /= link_to "What is this all about?", how_static_path, class: 'handwritten', style: 'float: right; margin-top: 16px'
+        = form_tag search_words_path, id: 'search-form' do
+          = editable_language_box(Language::PRIMARY, name: 'search', class: 'compact search', switch: Language::FOREIGN) do
+            = editable_field_tag('search[query]', '', placeholder: 'Search')
 
-      .clear
-
-      .navigation
+      %nav
         %ul.menu
-          %li{ class: menu_item_class(/words|translations/) }= link_to 'Words', words_path
+          %li{ class: menu_item_class(/words|translatings/) }= link_to 'Words', words_path
           %li{ class: menu_item_class(/exams/) }= link_to 'Quiz', exam_path_considering_session
-          %li
-            %form#search-form{ action: search_words_path }
-              = hidden_field_tag :lang, Language::PRIMARY
-              .search-box
+          %li{ class: menu_item_class(/about/) }= link_to 'About', '#'
+          %li= link_to '+', new_translating_path, class: 'add', id: 'add-new-translation', title: 'New Translation'
 
-            = link_to 'Search', '#'
-
-          %li= link_to '+', new_translation_path, class: 'add', title: 'Add New Translation'
-
-      .content
+      %section.content
         = yield
 
-      :javascript
-        document.languages = #{array_or_string_for_javascript(Language::AVAILABLE)};
-
-      :coffeescript
-        $ () ->
-          # fix for remote calling delete links.
-          $('a.remove').click (event) ->
-            event.preventDefault()
-            $.post $(this).attr('href'), { _method: 'delete' }
-
-          # disabling submit buttons after sendind form
-          $('.content form').has(".actions input[type='submit']").bind "submit.disableButton", () ->
-            $(this).find(".actions input[type='submit']").addClass('disabled').prop('disabled', true)
-
-          # search
-          searchOptions =
-            lang: '#{Language::PRIMARY}'
-            languages: document.languages
-            layout: 'compact'
-            autocomplete: false
-            width: '281px'
-            placeholder: 'Search...'
-            inputFieldNameFormat: 'query'
-            languageChangeCallback: (new_lang) ->
-              $('#lang').val new_lang
-
-          $('#search-form .search-box').languageBox searchOptions
-
-          $('#search-form, #search-form + a').mouseover () ->
-            $('#search-form:visible').clearQueue()
-            $('#search-form').not(':visible').fadeIn(200)
-
-          $('#search-form, #search-form + a').mouseout () ->
-            $('#search-form:visible').delay(100).queue () -> $(this).fadeOut(200).dequeue()
+      %footer
+        2012 &copy; Artur Hebda

@@ -13,8 +13,8 @@ Translate::Application.routes.draw do
     resources :translations, :only => [:new, :create, :destroy], :module => 'words'
   end
 
-  # translations created from scratch
-  resources :translations, :only => [:new, :create]
+  # translatings created from scratch
+  resources :translatings, :path => "translations", :except => [:index]
 
   resources :exams, :only => [:new, :create, :show] do
     member do

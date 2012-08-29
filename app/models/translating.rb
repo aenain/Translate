@@ -4,10 +4,11 @@ class Translating < ActiveRecord::Base
   belongs_to :original_context, class_name: Context.name, dependent: :destroy
   belongs_to :translated_context, class_name: Context.name, dependent: :destroy
 
-  accepts_nested_attributes_for :original_context, :translated_context
+  accepts_nested_attributes_for :original_context, :translated_context, :reject_if => lambda { |attributes| attributes[:sentence].blank? }
 
   validates :original_id, presence: true, uniqueness: { scope: [:translated_id] }
   validates :translated_id, presence: true
+  validate  :validate_contexts
 
   after_create :create_reverse_translating
   after_destroy :remove_reverse_translating
@@ -16,9 +17,30 @@ class Translating < ActiveRecord::Base
     Translating.create(reverse_params)
   end
 
+  def save_and_update_reversed
+    if self.new_record?
+      raise StandardError, "after_create callback does the same. Use save instead."
+    end
+
+    reverse = Translating.where(original_id: self.translated_id_was,
+                                translated_id: self.original_id_was,
+                                original_context_id: self.translated_context_id_was,
+                                translated_context_id: self.original_context_id_was).first
+
+    saved = self.save
+    reverse.update_attributes(reverse_params) if !reverse.nil? && saved
+
+    return saved
+  end
+
   def remove_reverse_translating
     reverse = Translating.first(conditions: reverse_params)
     reverse.destroy unless reverse.nil?
+  end
+
+  def build_missing_contexts
+    self.original_context ||= Context.new
+    self.translated_context ||= Context.new
   end
 
   def lang(association)
@@ -55,5 +77,10 @@ class Translating < ActiveRecord::Base
   def reverse_params
     { original_id: self.translated_id, original_context_id: self.translated_context_id,
       translated_id: self.original_id, translated_context_id: self.original_context_id }
+  end
+
+  # two situations are acceptible: both contexts are given or none
+  def validate_contexts
+    (original_context_id != nil) == (translated_context_id != nil)
   end
 end

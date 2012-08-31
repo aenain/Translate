@@ -8,9 +8,13 @@ class SearchTest < ActiveSupport::TestCase
       @search = Search.new(@query)
     end
 
-    should "only save the query as instance variable" do
-      assert_equal [:@query], @search.instance_variables
+    should "not save the translated_lang as instance variable" do
+      assert_equal [:@query, :@original_lang], @search.instance_variables
       assert_equal @query, @search.query
+    end
+
+    should "use primary language if not specified" do
+      assert_equal Language::PRIMARY, @search.instance_variable_get(:@original_lang)
     end
   end
 

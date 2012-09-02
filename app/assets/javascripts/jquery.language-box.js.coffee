@@ -94,6 +94,9 @@ closure = ($) ->
       @box.addClass('language-box').identify('language-box').css(this.boxDimensions())
 
     boxDimensions: ->
+      if (@options.width + '').search(/%/) != -1
+        @options.width = Number(parseFloat(@options.width) * @box[0].clientWidth / 100).toFixed(2)
+
       dimensions =
         height: @options.height || @options.layoutDimensions[@options.layout].height
         width: @options.width || @options.layoutDimensions[@options.layout].width
@@ -228,8 +231,8 @@ closure = ($) ->
           height = boxHeight - 6
           width = boxWidth - 41
 
-      height = height.toString() + 'px'
-      width = width.toString() + 'px'
+      height = height + 'px'
+      width = width + 'px'
 
       params =
         minWidth: width
@@ -238,7 +241,6 @@ closure = ($) ->
         minHeight: height
         height: height
         maxHeight: height
-
       return params
 
     setUpData: ->

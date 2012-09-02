@@ -19,13 +19,13 @@ class ContextTest < ActiveSupport::TestCase
       end
     end
 
-    context "context without sentence" do
+    context "context with sentence" do
       setup do
-        @context = Context.create(sentence: nil)
+        @context = Context.create(sentence: "It's a simple sentence.")
       end
 
-      should "not save the context" do
-        assert @context.new_record?
+      should "save the context" do
+        assert !@context.new_record?
       end
     end
   end
@@ -59,7 +59,7 @@ class ContextTest < ActiveSupport::TestCase
       assert_equal "I /know/ it seems to be /funny/.", @context.sentence(:raw)
     end
 
-    should "return a sentence without fill marks if :no_fill_markers specified" do
+    should "return a sentence without fill marks if :clear specified" do
       assert_equal "I know it seems to be funny.", @context.sentence(:clear)
     end
   end

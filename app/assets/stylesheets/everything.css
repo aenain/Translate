@@ -407,6 +407,11 @@ a, input[type=submit] {
   opacity: 0.3;
   cursor: default; }
 
+.data-missing {
+  font-weight: normal;
+  font-size: 0.85em;
+  color: #b7b7b7; }
+
 body.mobile {
   min-height: 401px; }
 body .page {
@@ -894,6 +899,7 @@ header.sub-header.question + .container {
       margin-left: 0; }
     .tipsy-inner .relation a {
       margin-top: 0.75em;
+      margin-bottom: 0.75em;
       padding: 0;
       display: block; }
       .tipsy-inner .relation a:hover {

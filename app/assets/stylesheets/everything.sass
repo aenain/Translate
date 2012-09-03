@@ -8,6 +8,7 @@ $additionalColor: lighten($color, 10%)
 $mainHeaderColor: #000
 $subHeaderColor: #000
 $attentionColor: lighten(#d54c4a, 5%)
+$missingDataColor: lighten($color, 25%)
 $linkColor: #fff
 $answerColor: #78B5D1
 
@@ -138,6 +139,11 @@ a, input[type=submit]
 .disabled a, .disabled input[type=submit], a.disabled, input[type=submit].disabled, input[disabled]
   opacity: 0.3
   cursor: default
+
+.data-missing
+  font-weight: normal
+  font-size: 0.85em
+  color: $missingDataColor
 
 // ---- layout
 body
@@ -786,6 +792,7 @@ header.sub-header.question
 
     a
       margin-top: 0.75em
+      margin-bottom: 0.75em
       padding: 0
       display: block
 

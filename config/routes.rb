@@ -10,6 +10,9 @@ Translate::Application.routes.draw do
     end
   end
 
+  # new translating for word
+  match '/words/:original_id/translations/new' => 'translatings#new', as: 'new_word_translating'
+
   # translatings created from scratch
   resources :translatings, :path => "translations", :except => [:index]
 

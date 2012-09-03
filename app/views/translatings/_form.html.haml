@@ -1,6 +1,6 @@
-= form_for @translating, class: 'container' do |form|
+= form_for @translating, html: { class: 'container', id: 'translating-form' } do |form|
   .step.current
-    = editable_language_box(@translating.original.try(:lang), for: 'translating[original]', class: 'word-with-context') do
+    = editable_language_box(@translating.original.lang, for: 'translating[original]', class: 'word-with-context') do
       = form.fields_for :original, @translating.original do |original_word|
         = original_word.text_field :name, placeholder: 'Word'
       %hr
@@ -12,7 +12,7 @@
       = form.submit(value: 'Continue', class: 'primary next-step')
 
   .step
-    = editable_language_box(@translating.translated.try(:lang), for: 'translating[translated]', class: 'word-with-context') do
+    = editable_language_box(@translating.translated.lang, for: 'translating[translated]', class: 'word-with-context') do
       = form.fields_for :translated, @translating.translated do |translated_word|
         = translated_word.text_field :name, placeholder: 'Word'
       %hr
@@ -26,9 +26,9 @@
 
 :javascript
   $(function() {
-    $("#new_translating .step").bind('step:in', function() {
+    $("#translating-form .step").bind('step:in', function() {
       $(this).find('input[type=text], [contenteditable=true]').eq(0).focus();
     });
     
-    new Step($("#new_translating"));
+    new Step($("#translating-form"));
   });

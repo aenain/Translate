@@ -1,4 +1,6 @@
 class Word < ActiveRecord::Base
+  extend CacheCounter
+
   RECENT_LIMIT = 19
 
   has_many :translatings, foreign_key: 'original_id', dependent: :destroy
@@ -111,6 +113,9 @@ class Word < ActiveRecord::Base
     where(created_at: start_at..stop_at)
   }
 
+  cache_counter :translations
+  cache_counter :contexts
+
   def self.find_or_build(attributes = {})
     if attributes.include?(:lang) && attributes.include?(:name)
       where(attributes).first || new(atrtibutes)
@@ -126,6 +131,12 @@ class Word < ActiveRecord::Base
       create(attributes)
     end
   end
+
+  def require_attention?
+    translations_count == 0 || contexts_count == 0
+  end
+
+  alias_method :requires_attention?, :require_attention?
 
   def for_js
     { id: id, name: name, lang: lang }

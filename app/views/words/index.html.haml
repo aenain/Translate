@@ -1,12 +1,63 @@
-.title
-  %h1 Recently Added Words
+%header.main
+  %h1 Recent Words
 
-- Language::AVAILABLE.each do |lang|
-  - if @words[lang].present?
-    .tile-vertical.bottom-9
-      = word_box(@words[lang].first(Word::RECENT_LIMIT), class: 'scalable min-height-92') do |word|
-        %li.clickable
-          = link_to word.name, word
+- @words.each do |lang, words|
+  .container
+    = language_box_word_list(lang.to_sym, words) do |word|
+      %h3{ class: word.require_attention? && 'attention' }= link_to word.name, word
+      .additional-info{ class: !on_mobile? && 'hidden' }
+        .relation
+          - if word.contexts_count == 0
+            - if word.translations_count == 1
+              = link_to "Add Context", edit_translating_path(word.translatings.first)
+            - else
+              = link_to "Add Context", new_word_translating_path(word.id)
+          - else
+            .count= word.contexts_count
+            = "Context".pluralize(word.contexts_count)
 
-      .actions
-        = link_to 'Add', new_word_path(lang: lang), class: 'next'
+        .relation
+          - if word.translations_count == 0
+            = link_to "Add Translation", new_word_translating_path(word.id)
+          - else
+            .count= word.translations_count
+            = "Translation".pluralize(word.translations_count)
+
+    .actions
+      = link_to "New Word", new_word_path(lang: lang), class: 'primary'
+
+- if !on_mobile?
+  :javascript
+    $(function() {
+      $('.language-box.list ul li').tipsy({
+          trigger: 'manual',
+          opacity: 1,
+          html: true,
+          fade: true,
+          gravity: 's',
+          title: function() {
+            return $(this).children('.additional-info').html();
+          }
+        }).hover(function() {
+          if (! $(this).hasClass('prevent-tipsy'))
+            $(this).tipsy("show").addClass('with-focus');
+        }, function() {
+          var $tip = $(this).tipsy(true).$tip,
+              $element = $(this);
+
+          setTimeout(function() {
+          if ($tip.is(':hover')) {
+            $tip.bind('mouseleave.hide-itself', function() {
+              $element.addClass('prevent-tipsy');
+              setTimeout(function() {
+                if ($element.not(':hover').length > 0)
+                  $element.tipsy("hide").removeClass('prevent-tipsy with-focus');
+              }, 100);
+            });
+          }
+          else {
+            $element.tipsy("hide").removeClass('prevent-tipsy with-focus');
+          }
+          }, 100);
+        });
+      });

@@ -1,17 +1,17 @@
 class WordsController < ApplicationController
-  RECENT_LIMIT_FOR_GROUPS = (Language::AVAILABLE.count * Word::RECENT_LIMIT * 1.4).ceil
+  RECENT_LIMIT_FOR_GROUPS = (Language::AVAILABLE.count * Word::RECENT_LIMIT).ceil
 
   before_filter :load_word, :only => [:show, :update, :destroy]
 
   def index
-    @words = Word.where(lang: Language::AVAILABLE).order('created_at DESC').limit(RECENT_LIMIT_FOR_GROUPS).group_by(&:lang)
+    @words = Word.order('created_at DESC').limit(RECENT_LIMIT_FOR_GROUPS).group_by(&:lang)
   end
 
   def search
     @query = params[:query]
     @lang = params[:lang]
 
-    @results = Search.new(@query, lang: @lang).words.where(lang: Language::AVAILABLE)
+    @results = Search.new(@query, lang: @lang).words
 
     if @results.length == 1
       redirect_to @results.first
@@ -34,8 +34,7 @@ class WordsController < ApplicationController
   end
 
   def show
-    @translations = @word.translations.all(conditions: { lang: Language::AVAILABLE }, order: 'name ASC').group_by(&:lang)
-    @missing_translation_languages = Language::AVAILABLE - [@word.lang] - @translations.keys
+    @translatings = @word.translatings.includes(:original_context, :translated).group_by { |t| t.translated.lang }
   end
 
   def update

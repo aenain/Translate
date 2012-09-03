@@ -1,8 +1,8 @@
 class TranslatingsController < ApplicationController
   def new
     @translating = Translating.new
-    @translating.original = Word.new(lang: Language::PRIMARY)
-    @translating.translated = Word.new(lang: Language::FOREIGN.first)
+    @translating.original = params[:original_id] && Word.find_by_id(params[:original_id]) || Word.new(lang: Language::PRIMARY)
+    @translating.translated = Word.new(lang: params[:lang] || (Language::AVAILABLE - [@translating.original.lang]).first)
     @translating.build_missing_contexts
   end
 
@@ -18,6 +18,11 @@ class TranslatingsController < ApplicationController
       @translating.build_missing_contexts
       render :new
     end
+  end
+
+  def edit
+    @translating = Translating.find(params[:id])
+    @translating.build_missing_contexts
   end
 
   def update

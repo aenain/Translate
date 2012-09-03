@@ -1,0 +1,63 @@
+%header.main.hoverable#word-show
+  .back
+    = link_to "Remove", '#', class: 'dangerous'
+    = link_to "Edit", '#', class: 'primary', id: 'word-edit-link'
+
+  .front
+    %h1#word-name= @word.name
+    .lang{ class: @word.lang }
+
+= form_for @word, html: { class: 'container hidden', id: 'word-edit' } do |f|
+  = editable_language_box(@word.lang, name: 'word', class: 'word-with-context') do
+    = editable_field_tag :word, @word.name, autocorrect: 'off', autocapitalize: 'off', placeholder: 'Word', class: 'first-line'
+
+  .actions
+    = link_to "Cancel", '#', class: 'secondary', id: 'cancel-word-edit-link'
+    = f.submit "Save", class: 'primary'
+
+- if @translatings.blank?
+  .sub-header
+    %h2 Translations
+
+  .container
+    .actions
+      = link_to "Add", new_word_translating_path(@word.id), class: 'primary'
+
+- else
+  - @translatings.each do |lang, translatings|
+    .sub-header.with-lang
+      %h2 Translations
+      .lang{ class: lang }
+
+    %ul.container.translation-list
+      - translatings.each do |translating|
+        %li.hoverable
+          .back
+            = link_to "Remove", '#', class: 'dangerous'
+            = link_to "Edit", edit_translating_path(translating), class: 'primary'
+
+          .front
+            %h3= translating.translated.name
+            %p
+              - if translating.original_context.present?
+                = translating.original_context.sentence(:clear)
+              - else
+                %span.data-missing No Context
+
+      %li.actions
+        = link_to "Add", new_word_translating_path(@word.id, lang: lang), class: 'primary'
+
+
+:javascript
+  $(function() {
+    $('#word-edit-link, #cancel-word-edit-link').click(function(event) {
+      $('#word-show, #word-edit').toggleClass('hidden');
+      if ($(this).attr('id') === 'word-edit-link')
+        $('#word-edit').find('input[type=text], [contenteditable=true]').eq(0).focus();
+    });
+
+    $('#word-edit input[type=text], #word-edit [contenteditable=true]').bind('keydown.cancel-on-escape', function(event) {
+      if (event.keyCode == 27) // escape keycode
+        $("#cancel-word-edit-link").click();
+    });
+  });
